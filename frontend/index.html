@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Product Quality Risk and Evidence Traceability V6.2</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="card header">
+    <div>
+      <span class="badge">V6.2</span>
+      <span class="badge">Common and Project</span>
+      <span class="badge">Clickable Sankey</span>
+      <span class="badge">Project Scope Driven</span>
+      <span class="badge">PostgreSQL Persistence</span>
+      <h1>Product Quality Risk and Evidence Traceability System</h1>
+      <p>Frontend-backend separated architecture. Common shows full ISO IEC 25010 model and common trace tree. Project manages project cards, project details, quality scope tailoring and project specific Sankey tree.</p>
+    </div>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <div id="errorBanner" class="error-banner hidden"></div>
+
+  <div class="nav">
+    <button id="tabCommon" class="active">Common</button>
+    <button id="tabProject">Project</button>
+  </div>
+
+  <!-- Common View -->
+  <section id="commonView">
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="card stat"><div class="num" id="cChars">—</div><div class="label">Quality Characteristics</div></div>
+      <div class="card stat"><div class="num" id="cSubs">—</div><div class="label">Quality Subcharacteristics</div></div>
+      <div class="card stat"><div class="num">11</div><div class="label">Trace Layers</div></div>
+    </div>
+    <div class="modelGrid">
+      <div class="card section">
+        <h2>Common Quality Overview</h2>
+        <p>Full original ISO IEC 25010 model. Project tailoring never modifies this model.</p>
+        <div id="commonButtons" class="row" style="margin-top:10px"></div>
+      </div>
+      <div class="card section">
+        <h2>Original Full Quality Model</h2>
+        <p>All common attributes are visible here.</p>
+        <div id="fullModel" class="modelList" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <div class="card section">
+      <h2 id="selectedTitle">Selected Characteristic</h2>
+      <p id="selectedHint"></p>
+      <div id="subGrid" class="subGrid" style="margin-top:10px"></div>
+    </div>
+    <div class="mainGrid">
+      <div class="card section">
+        <h2>Common Sankey Trace Tree</h2>
+        <p>Reference trace tree generated from the complete common model.</p>
+        <div class="legend">
+          <span><span class="dot" style="background:#2563eb"></span>Trace chain</span>
+          <span><span class="dot" style="background:#f97316"></span>Selected relation</span>
+        </div>
+        <div id="commonSankey"></div>
+      </div>
+      <div class="card detail" id="commonDetail">
+        <h2>Common node detail</h2>
+        <p>Select a node in the Common Sankey Trace Tree.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project View -->
+  <section id="projectView" class="hidden">
+    <div id="projectList">
+      <div class="card section">
+        <div class="projectHead">
+          <div>
+            <h2>Project Overview</h2>
+            <p>Each project card includes a project specific Sankey tree preview. Click a card to open details.</p>
+          </div>
+          <div class="row">
+            <button class="plus" id="newProjectBtn">+</button>
+            <button class="soft" id="importBtn" style="font-size:12px">↑ Import</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none">
+          </div>
+        </div>
+        <div id="projectCards" class="grid3" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div id="projectDetail" class="hidden">
+      <div class="card section">
+        <div class="projectHead">
+          <div>
+            <button class="soft" id="backBtn">← Back</button>
+            <h2 id="pTitle" style="margin-top:10px"></h2>
+            <p id="pInfo"></p>
+          </div>
+          <div class="row">
+            <button id="editScopeBtn">Edit Quality Scope</button>
+            <button id="toggleTraceBtn" class="active">Project Sankey Tree</button>
+            <button id="exportBtn" class="soft">↓ Export</button>
+            <button id="deleteProjectBtn" class="soft" style="color:#ef4444;border-color:#fecdd3">Delete</button>
+          </div>
+        </div>
+        <div id="pStats" class="grid4" style="margin-top:12px"></div>
+      </div>
+      <div class="grid2">
+        <div class="card section"><h2>Quality Aspect Distribution</h2><div id="aspectTable"></div></div>
+        <div class="card section"><h2>Risk and Evidence Summary</h2><div id="riskTable"></div></div>
+      </div>
+      <!-- Risks, Evidence, Findings, Actions (Slice 6) -->
+      <div class="grid2" style="margin-top:12px">
+        <div class="card section">
+          <h2>Risk Items</h2>
+          <div id="riskItemsPanel"></div>
+        </div>
+        <div class="card section">
+          <h2>Evidence Items</h2>
+          <div id="evidencePanel"></div>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="card section">
+          <h2>Assessment Findings</h2>
+          <div id="findingsPanel"></div>
+        </div>
+        <div class="card section">
+          <h2>Action Items</h2>
+          <div id="actionsPanel"></div>
+        </div>
+      </div>
+
+      <!-- Trace Chain Management (Slice 4) -->
+      <div class="card section" style="margin-top:12px">
+        <div class="projectHead">
+          <div>
+            <h2>Trace Chain Management</h2>
+            <p>Quality Goals → Requirements → Sub-Requirements linked to Architecture Elements and Test Cases.</p>
+          </div>
+          <button id="refreshTraceBtn" class="soft">Refresh</button>
+        </div>
+        <div id="traceChainPanel" style="margin-top:12px"></div>
+      </div>
+
+      <!-- Project Sankey Trace View — shown by default -->
+      <div id="projectTrace">
+        <div class="card toolbar">
+          <h2>Project Specific Sankey Trace View</h2>
+          <p>Generated from this project's tailored quality scope.</p>
+          <div class="row">
+            <button id="fShowExcluded" class="soft">Show excluded items</button>
+            <select id="fChar"></select>
+            <select id="fAspect"></select>
+            <select id="fRisk"></select>
+            <select id="fEvidence"></select>
+            <input id="fSearch" style="max-width:380px" placeholder="Search node">
+          </div>
+        </div>
+        <div class="mainGrid">
+          <div id="projectSankey"></div>
+          <div class="card detail" id="projectNodeDetail">
+            <h2>Project node detail</h2>
+            <p>Select a node in the project Sankey.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- .page -->
+
+<!-- Create / Edit Project Modal -->
+<div id="modal" class="modalMask">
+  <div class="modal">
+    <div class="projectHead">
+      <div>
+        <h2 id="modalTitle">Create Project</h2>
+        <p>Create Project and Quality Scope Tailoring are only shown here.</p>
+      </div>
+      <button id="closeModal">Close</button>
+    </div>
+    <div class="wizard">
+      <div>
+        <div class="wizardStep" id="wStep1"><b>Step 1</b><div>Project Basic Information</div></div>
+        <div class="wizardStep" id="wStep2"><b>Step 2</b><div>Product Line Selection</div></div>
+        <div class="wizardStep" id="wStep3"><b>Step 3</b><div>Quality Aspect Context</div></div>
+        <div class="wizardStep" id="wStep4"><b>Step 4</b><div>Quality Scope Tailoring</div></div>
+        <div class="wizardStep" id="wStep5"><b>Step 5</b><div>Confirmation</div></div>
+      </div>
+      <div>
+        <div class="grid2">
+          <div class="card section">
+            <h3>Project Basic Information</h3>
+            <p>Project ID</p><input id="mId">
+            <p>Project Name</p><input id="mName">
+            <p>Product Type</p><input id="mProductType">
+            <p>Project Phase</p>
+            <select id="mPhase">
+              <option>Concept</option>
+              <option>Development</option>
+              <option>Validation</option>
+              <option>Production</option>
+            </select>
+            <p>System Boundary</p><textarea id="mBoundary"></textarea>
+            <p>Assessment Target</p><input id="mAssessmentTarget">
+            <p>Customer</p><input id="mCustomer">
+          </div>
+          <div class="card section">
+            <h3>Product Line and Quality Aspects</h3>
+            <p>Product Line</p>
+            <select id="mProduct">
+              <option value="ADAS">ADAS</option>
+              <option value="AreneTools">Arene Tools</option>
+              <option value="WovenCity">Woven City</option>
+              <option value="CloudAI">Cloud and AI</option>
+            </select>
+            <p id="mProductDesc" style="margin-top:8px"></p>
+            <p style="margin-top:12px">Quality Aspects</p>
+            <div id="mAspects" style="margin-top:8px"></div>
+          </div>
+        </div>
+        <div class="card section">
+          <div class="projectHead">
+            <div>
+              <h3>Quality Scope Tailoring</h3>
+              <p>Tailoring table is the data source for the project Sankey tree.</p>
+            </div>
+            <div class="row">
+              <button id="mShowExcluded">Show excluded</button>
+              <select id="mAspectFilter"></select>
+              <select id="mAppFilter"></select>
+            </div>
+          </div>
+          <div id="mScopeLoading" class="loading hidden">Loading recommendations…</div>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Characteristic</th>
+                  <th>Subcharacteristic</th>
+                  <th>Recommended</th>
+                  <th>Applicability</th>
+                  <th>Rationale</th>
+                  <th>Aspects</th>
+                  <th>Override</th>
+                </tr>
+              </thead>
+              <tbody id="mRows"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:12px">
+          <button id="cancelBtn">Cancel</button>
+          <button id="saveBtn" class="active">Save Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

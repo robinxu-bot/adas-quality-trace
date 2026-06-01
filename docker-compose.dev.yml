@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:15-alpine
+    env_file: .env.dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pqrets -d pqrets"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: ./backend
+    env_file: .env.dev.docker
+    volumes:
+      - ./data:/data:ro
+    ports:
+      - "9000:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn main:app --host 0.0.0.0 --port 9000 --reload"
+
+volumes:
+  postgres_dev_data:

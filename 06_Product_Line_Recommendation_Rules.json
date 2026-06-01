@@ -1,0 +1,363 @@
+{
+  "schemaVersion": "1.0",
+  "productLines": [
+    {
+      "productLineId": "AreneTools",
+      "productLineName": "Arene Tools",
+      "description": "Engineering tools, validation toolchains, requirement tools, CI pipelines and traceability tooling.",
+      "recommendationFocus": [
+        "Functional suitability",
+        "Performance efficiency",
+        "Compatibility",
+        "Security",
+        "Maintainability",
+        "Flexibility"
+      ],
+      "rules": [
+        {
+          "ruleId": "ARENE_REC_001",
+          "productLineId": "AreneTools",
+          "qualityCharacteristicId": "QC_Maintainability",
+          "qualitySubcharacteristicId": "QSC_Maintainability_Testability",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Engineering tools shall provide controllable verification workflows and reviewable evidence.",
+          "notApplicableReason": "Not applicable only if the tool is not used for verification or evidence generation.",
+          "defaultQualityAspects": [
+            "QM"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ARENE_REC_002",
+          "productLineId": "AreneTools",
+          "qualityCharacteristicId": "QC_Compatibility",
+          "qualitySubcharacteristicId": "QSC_Compatibility_Interoperability",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Tools usually exchange data with requirement tools, test tools, CI systems and repositories.",
+          "notApplicableReason": "Not applicable only for isolated standalone tools without data exchange.",
+          "defaultQualityAspects": [
+            "QM"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ARENE_REC_003",
+          "productLineId": "AreneTools",
+          "qualityCharacteristicId": "QC_Security",
+          "qualitySubcharacteristicId": "QSC_Security_Authenticity",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Tool users, scripts and exported evidence shall be traceable and authenticated where required.",
+          "notApplicableReason": "Not applicable only for offline non controlled prototypes.",
+          "defaultQualityAspects": [
+            "CS",
+            "QM"
+          ],
+          "editable": true
+        }
+      ]
+    },
+    {
+      "productLineId": "ADAS",
+      "productLineName": "ADAS",
+      "description": "Camera radar fusion, AEB, LKA, HMI warning, diagnostic handling, degradation and safe state control.",
+      "recommendationFocus": [
+        "Functional suitability",
+        "Performance efficiency",
+        "Reliability",
+        "Security",
+        "Interaction capability",
+        "Safety"
+      ],
+      "rules": [
+        {
+          "ruleId": "ADAS_REC_001",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_FunctionalSuitability",
+          "qualitySubcharacteristicId": "QSC_FunctionalSuitability_FunctionalCompleteness",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS project shall confirm that perception, fusion, warning, degraded operation and diagnostic functions required by the project scope are covered.",
+          "notApplicableReason": "Not applicable only if the function is fully outside project boundary or handled by another ECU or platform team.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA",
+            "SOTIF"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_002",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_FunctionalSuitability",
+          "qualitySubcharacteristicId": "QSC_FunctionalSuitability_FunctionalCorrectness",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS decisions depend on correct perception, fusion and warning behavior.",
+          "notApplicableReason": "Not applicable only when the assessed component does not provide function output affecting vehicle or driver decisions.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA",
+            "SOTIF",
+            "AI Safety"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_003",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_PerformanceEfficiency",
+          "qualitySubcharacteristicId": "QSC_PerformanceEfficiency_TimeBehaviour",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS functions have timing constraints for perception update, warning request and degraded state transition.",
+          "notApplicableReason": "Not applicable only for offline tools or non runtime analysis components.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA",
+            "SOTIF",
+            "AI Safety"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_004",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Reliability",
+          "qualitySubcharacteristicId": "QSC_Reliability_Availability",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS availability state shall be managed based on sensor health, vehicle state and system conditions.",
+          "notApplicableReason": "Not applicable only when the assessed scope is not responsible for runtime service availability.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_005",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Reliability",
+          "qualitySubcharacteristicId": "QSC_Reliability_FaultTolerance",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS shall tolerate sensor dropout, stale input, inconsistent data and partial degradation where defined by the safety concept.",
+          "notApplicableReason": "Not applicable only if fault handling is fully outside the assessed system boundary.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA",
+            "SOTIF"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_006",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Security",
+          "qualitySubcharacteristicId": "QSC_Security_Integrity",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS configuration, calibration, object data and diagnostic state shall be protected against unauthorized modification.",
+          "notApplicableReason": "Not applicable only if the assessed item has no data input, configuration, communication or update interface.",
+          "defaultQualityAspects": [
+            "CS",
+            "FuSA"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_007",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Safety",
+          "qualitySubcharacteristicId": "QSC_Safety_RiskIdentification",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS functions may influence warning, braking or steering related decisions, therefore risk identification is required.",
+          "notApplicableReason": "Not applicable only if the assessed scope has no safety relevant behavior or decision influence.",
+          "defaultQualityAspects": [
+            "FuSA",
+            "SOTIF",
+            "AI Safety"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_008",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Safety",
+          "qualitySubcharacteristicId": "QSC_Safety_FailSafe",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS shall enter or maintain safe state when confirmed hazardous failures occur.",
+          "notApplicableReason": "Not applicable only if fail safe behavior is completely handled by another system and outside project responsibility.",
+          "defaultQualityAspects": [
+            "FuSA"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_009",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Safety",
+          "qualitySubcharacteristicId": "QSC_Safety_HazardWarning",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS shall warn the driver or other vehicle systems when hazardous situations or limitations are detected.",
+          "notApplicableReason": "Not applicable only when the assessed component does not provide warning, availability or limitation status.",
+          "defaultQualityAspects": [
+            "FuSA",
+            "SOTIF"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_010",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_InteractionCapability",
+          "qualitySubcharacteristicId": "QSC_InteractionCapability_UserErrorProtection",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "ADAS shall prevent inappropriate activation or misuse under unsupported operating conditions.",
+          "notApplicableReason": "Not applicable only if no user interaction or activation behavior is in project scope.",
+          "defaultQualityAspects": [
+            "QM",
+            "FuSA",
+            "SOTIF"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_011",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Flexibility",
+          "qualitySubcharacteristicId": "QSC_Flexibility_Replaceability",
+          "recommendedApplicability": "Not applicable",
+          "recommendationReason": "Replaceability is not a primary project level quality concern for most ADAS function assessment scopes.",
+          "notApplicableReason": "The project does not include runtime replacement of equivalent software products or third party replacement scenarios.",
+          "defaultQualityAspects": [
+            "QM"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "ADAS_REC_012",
+          "productLineId": "ADAS",
+          "qualityCharacteristicId": "QC_Maintainability",
+          "qualitySubcharacteristicId": "QSC_Maintainability_Reusability",
+          "recommendedApplicability": "Partially applicable",
+          "recommendationReason": "Reusability may be relevant if the ADAS platform is shared across vehicle programs.",
+          "notApplicableReason": "If the project is a one off assessment without platform reuse objective, this item may be treated as low priority or covered by platform.",
+          "defaultQualityAspects": [
+            "QM"
+          ],
+          "editable": true
+        }
+      ]
+    },
+    {
+      "productLineId": "WovenCity",
+      "productLineName": "Woven City",
+      "description": "Smart city mobility services, infrastructure integration, user interaction, availability and safe integration.",
+      "recommendationFocus": [
+        "Functional suitability",
+        "Compatibility",
+        "Interaction capability",
+        "Reliability",
+        "Security",
+        "Flexibility",
+        "Safety"
+      ],
+      "rules": [
+        {
+          "ruleId": "CITY_REC_001",
+          "productLineId": "WovenCity",
+          "qualityCharacteristicId": "QC_Compatibility",
+          "qualitySubcharacteristicId": "QSC_Compatibility_Interoperability",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "City mobility services exchange data with infrastructure, vehicles, user applications and operation centers.",
+          "notApplicableReason": "Not applicable only when the service is isolated and has no external dependency.",
+          "defaultQualityAspects": [
+            "QM",
+            "CS"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "CITY_REC_002",
+          "productLineId": "WovenCity",
+          "qualityCharacteristicId": "QC_InteractionCapability",
+          "qualitySubcharacteristicId": "QSC_InteractionCapability_Inclusivity",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Mobility services shall consider different user groups and accessibility needs.",
+          "notApplicableReason": "Not applicable only for non user facing backend components.",
+          "defaultQualityAspects": [
+            "QM",
+            "SOTIF"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "CITY_REC_003",
+          "productLineId": "WovenCity",
+          "qualityCharacteristicId": "QC_Safety",
+          "qualitySubcharacteristicId": "QSC_Safety_SafeIntegration",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Mobility service and infrastructure service integration may create safety relevant conflict scenarios.",
+          "notApplicableReason": "Not applicable only if the service has no safety relevant integration with mobility operations.",
+          "defaultQualityAspects": [
+            "FuSA",
+            "SOTIF",
+            "CS"
+          ],
+          "editable": true
+        }
+      ]
+    },
+    {
+      "productLineId": "CloudAI",
+      "productLineName": "Cloud and AI",
+      "description": "Cloud platforms, data driven services, AI inference service, model deployment and operational monitoring.",
+      "recommendationFocus": [
+        "Functional suitability",
+        "Performance efficiency",
+        "Reliability",
+        "Security",
+        "Maintainability",
+        "Flexibility"
+      ],
+      "rules": [
+        {
+          "ruleId": "CLOUD_REC_001",
+          "productLineId": "CloudAI",
+          "qualityCharacteristicId": "QC_PerformanceEfficiency",
+          "qualitySubcharacteristicId": "QSC_PerformanceEfficiency_Capacity",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Cloud and AI services shall handle defined workload, traffic volume and model serving capacity.",
+          "notApplicableReason": "Not applicable only when workload capacity is outside the service responsibility.",
+          "defaultQualityAspects": [
+            "QM",
+            "AI Safety"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "CLOUD_REC_002",
+          "productLineId": "CloudAI",
+          "qualityCharacteristicId": "QC_Security",
+          "qualitySubcharacteristicId": "QSC_Security_Confidentiality",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Tenant data, model input, model output and logs shall be protected against unauthorized access.",
+          "notApplicableReason": "Not applicable only for fully synthetic or non sensitive data prototypes.",
+          "defaultQualityAspects": [
+            "CS"
+          ],
+          "editable": true
+        },
+        {
+          "ruleId": "CLOUD_REC_003",
+          "productLineId": "CloudAI",
+          "qualityCharacteristicId": "QC_Flexibility",
+          "qualitySubcharacteristicId": "QSC_Flexibility_Scalability",
+          "recommendedApplicability": "Applicable",
+          "recommendationReason": "Cloud services and AI inference services usually require horizontal or workload based scaling.",
+          "notApplicableReason": "Not applicable only for fixed offline evaluation tools.",
+          "defaultQualityAspects": [
+            "QM",
+            "AI Safety"
+          ],
+          "editable": true
+        }
+      ]
+    }
+  ]
+}

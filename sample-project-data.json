@@ -1,0 +1,765 @@
+{
+  "project": {
+    "projectId": "PRJ_ADAS_L2_001",
+    "projectName": "ADAS L2 Highway Assist Quality Assessment",
+    "productLine": "ADAS",
+    "productType": "Camera radar fusion system",
+    "systemBoundary": "Perception, fusion, AEB warning, LKA warning, HMI warning and degraded operation",
+    "projectPhase": "B Sample",
+    "assessmentTarget": "Product quality risk review"
+  },
+  "qualityAspects": [
+    "QM",
+    "FuSA",
+    "CS",
+    "SOTIF",
+    "AI Safety"
+  ],
+  "iso25010": [
+    {
+      "name": "Functional suitability",
+      "subs": [
+        "Functional completeness",
+        "Functional correctness",
+        "Functional appropriateness"
+      ]
+    },
+    {
+      "name": "Performance efficiency",
+      "subs": [
+        "Time behaviour",
+        "Resource utilization",
+        "Capacity"
+      ]
+    },
+    {
+      "name": "Compatibility",
+      "subs": [
+        "Co-existence",
+        "Interoperability"
+      ]
+    },
+    {
+      "name": "Interaction capability",
+      "subs": [
+        "Appropriateness recognizability",
+        "Learnability",
+        "Operability",
+        "User error protection",
+        "User engagement",
+        "Inclusivity",
+        "User assistance",
+        "Self-descriptiveness"
+      ]
+    },
+    {
+      "name": "Reliability",
+      "subs": [
+        "Faultlessness",
+        "Availability",
+        "Fault tolerance",
+        "Recoverability"
+      ]
+    },
+    {
+      "name": "Security",
+      "subs": [
+        "Confidentiality",
+        "Integrity",
+        "Non-repudiation",
+        "Accountability",
+        "Authenticity",
+        "Resistance"
+      ]
+    },
+    {
+      "name": "Maintainability",
+      "subs": [
+        "Modularity",
+        "Reusability",
+        "Analysability",
+        "Modifiability",
+        "Testability"
+      ]
+    },
+    {
+      "name": "Flexibility",
+      "subs": [
+        "Adaptability",
+        "Scalability",
+        "Installability",
+        "Replaceability"
+      ]
+    },
+    {
+      "name": "Safety",
+      "subs": [
+        "Operational constraint",
+        "Risk identification",
+        "Fail safe",
+        "Hazard warning",
+        "Safe integration"
+      ]
+    }
+  ],
+  "projectQualityScope": [
+    {
+      "id": "QSC_Functionalsuitability_Functionalcompleteness",
+      "qualityCharacteristic": "Functional suitability",
+      "qualitySubcharacteristic": "Functional completeness",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Functional suitability / Functional completeness is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Functionalsuitability_Functionalcorrectness",
+      "qualityCharacteristic": "Functional suitability",
+      "qualitySubcharacteristic": "Functional correctness",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Functional suitability / Functional correctness is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Functionalsuitability_Functionalappropriateness",
+      "qualityCharacteristic": "Functional suitability",
+      "qualitySubcharacteristic": "Functional appropriateness",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Functional suitability / Functional appropriateness is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Performanceefficiency_Timebehaviour",
+      "qualityCharacteristic": "Performance efficiency",
+      "qualitySubcharacteristic": "Time behaviour",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Performance efficiency / Time behaviour is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Performanceefficiency_Resourceutilization",
+      "qualityCharacteristic": "Performance efficiency",
+      "qualitySubcharacteristic": "Resource utilization",
+      "recommendedApplicability": "Partially applicable",
+      "applicability": "Partially applicable",
+      "recommendationReason": "Performance efficiency / Resource utilization is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "AI Safety"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Performanceefficiency_Capacity",
+      "qualityCharacteristic": "Performance efficiency",
+      "qualitySubcharacteristic": "Capacity",
+      "recommendedApplicability": "Partially applicable",
+      "applicability": "Partially applicable",
+      "recommendationReason": "Performance efficiency / Capacity is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "AI Safety"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Compatibility_Coexistence",
+      "qualityCharacteristic": "Compatibility",
+      "qualitySubcharacteristic": "Co-existence",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Compatibility / Co-existence is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Compatibility_Interoperability",
+      "qualityCharacteristic": "Compatibility",
+      "qualitySubcharacteristic": "Interoperability",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Compatibility / Interoperability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Appropriatenessrecognizability",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "Appropriateness recognizability",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Interaction capability / Appropriateness recognizability is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Learnability",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "Learnability",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Interaction capability / Learnability is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Operability",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "Operability",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Interaction capability / Operability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Usererrorprotection",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "User error protection",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Interaction capability / User error protection is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Userengagement",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "User engagement",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Interaction capability / User engagement is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Inclusivity",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "Inclusivity",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Interaction capability / Inclusivity is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Userassistance",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "User assistance",
+      "recommendedApplicability": "Partially applicable",
+      "applicability": "Partially applicable",
+      "recommendationReason": "Interaction capability / User assistance is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Interactioncapability_Selfdescriptiveness",
+      "qualityCharacteristic": "Interaction capability",
+      "qualitySubcharacteristic": "Self-descriptiveness",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Interaction capability / Self-descriptiveness is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Reliability_Faultlessness",
+      "qualityCharacteristic": "Reliability",
+      "qualitySubcharacteristic": "Faultlessness",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Reliability / Faultlessness is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Reliability_Availability",
+      "qualityCharacteristic": "Reliability",
+      "qualitySubcharacteristic": "Availability",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Reliability / Availability is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Reliability_Faulttolerance",
+      "qualityCharacteristic": "Reliability",
+      "qualitySubcharacteristic": "Fault tolerance",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Reliability / Fault tolerance is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Reliability_Recoverability",
+      "qualityCharacteristic": "Reliability",
+      "qualitySubcharacteristic": "Recoverability",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Reliability / Recoverability is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "QM",
+        "FuSA"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Confidentiality",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Confidentiality",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Security / Confidentiality is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Integrity",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Integrity",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Security / Integrity is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "CS",
+        "FuSA"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Nonrepudiation",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Non-repudiation",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Security / Non-repudiation is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Accountability",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Accountability",
+      "recommendedApplicability": "Out of project scope",
+      "applicability": "Out of project scope",
+      "recommendationReason": "Security / Accountability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Authenticity",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Authenticity",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Security / Authenticity is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "CS"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Security_Resistance",
+      "qualityCharacteristic": "Security",
+      "qualitySubcharacteristic": "Resistance",
+      "recommendedApplicability": "Partially applicable",
+      "applicability": "Partially applicable",
+      "recommendationReason": "Security / Resistance is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "CS"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Maintainability_Modularity",
+      "qualityCharacteristic": "Maintainability",
+      "qualitySubcharacteristic": "Modularity",
+      "recommendedApplicability": "Covered by platform",
+      "applicability": "Covered by platform",
+      "recommendationReason": "Maintainability / Modularity is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Maintainability_Reusability",
+      "qualityCharacteristic": "Maintainability",
+      "qualitySubcharacteristic": "Reusability",
+      "recommendedApplicability": "Covered by platform",
+      "applicability": "Covered by platform",
+      "recommendationReason": "Maintainability / Reusability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Maintainability_Analysability",
+      "qualityCharacteristic": "Maintainability",
+      "qualitySubcharacteristic": "Analysability",
+      "recommendedApplicability": "Covered by platform",
+      "applicability": "Covered by platform",
+      "recommendationReason": "Maintainability / Analysability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Maintainability_Modifiability",
+      "qualityCharacteristic": "Maintainability",
+      "qualitySubcharacteristic": "Modifiability",
+      "recommendedApplicability": "Covered by platform",
+      "applicability": "Covered by platform",
+      "recommendationReason": "Maintainability / Modifiability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Maintainability_Testability",
+      "qualityCharacteristic": "Maintainability",
+      "qualitySubcharacteristic": "Testability",
+      "recommendedApplicability": "Covered by platform",
+      "applicability": "Covered by platform",
+      "recommendationReason": "Maintainability / Testability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Flexibility_Adaptability",
+      "qualityCharacteristic": "Flexibility",
+      "qualitySubcharacteristic": "Adaptability",
+      "recommendedApplicability": "Not applicable",
+      "applicability": "Not applicable",
+      "recommendationReason": "Flexibility / Adaptability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Flexibility_Scalability",
+      "qualityCharacteristic": "Flexibility",
+      "qualitySubcharacteristic": "Scalability",
+      "recommendedApplicability": "Not applicable",
+      "applicability": "Not applicable",
+      "recommendationReason": "Flexibility / Scalability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Flexibility_Installability",
+      "qualityCharacteristic": "Flexibility",
+      "qualitySubcharacteristic": "Installability",
+      "recommendedApplicability": "Not applicable",
+      "applicability": "Not applicable",
+      "recommendationReason": "Flexibility / Installability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Flexibility_Replaceability",
+      "qualityCharacteristic": "Flexibility",
+      "qualitySubcharacteristic": "Replaceability",
+      "recommendedApplicability": "Not applicable",
+      "applicability": "Not applicable",
+      "recommendationReason": "Flexibility / Replaceability is not a primary recommended focus for the initial ADAS L2 assessment scope.",
+      "applicabilityRationale": "This item is excluded from the project trace view by default. It may be reviewed later if the project boundary changes.",
+      "qualityAspects": [
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Safety_Operationalconstraint",
+      "qualityCharacteristic": "Safety",
+      "qualitySubcharacteristic": "Operational constraint",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Safety / Operational constraint is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF",
+        "QM"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Safety_Riskidentification",
+      "qualityCharacteristic": "Safety",
+      "qualitySubcharacteristic": "Risk identification",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Safety / Risk identification is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Safety_Failsafe",
+      "qualityCharacteristic": "Safety",
+      "qualitySubcharacteristic": "Fail safe",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Safety / Fail safe is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "FuSA"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Safety_Hazardwarning",
+      "qualityCharacteristic": "Safety",
+      "qualitySubcharacteristic": "Hazard warning",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Safety / Hazard warning is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    },
+    {
+      "id": "QSC_Safety_Safeintegration",
+      "qualityCharacteristic": "Safety",
+      "qualitySubcharacteristic": "Safe integration",
+      "recommendedApplicability": "Applicable",
+      "applicability": "Applicable",
+      "recommendationReason": "Safety / Safe integration is recommended for ADAS project quality assessment because it is relevant to the selected system boundary.",
+      "applicabilityRationale": "This item is included in the project quality scope for camera radar fusion, AEB warning, LKA warning, HMI warning or degraded operation.",
+      "qualityAspects": [
+        "FuSA",
+        "CS",
+        "SOTIF"
+      ],
+      "manualOverride": false
+    }
+  ],
+  "qualityRequirements": [
+    {
+      "id": "QR_ADAS_Safety_RiskIdentification_001",
+      "characteristic": "Safety",
+      "subcharacteristic": "Risk identification",
+      "aspects": [
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "text": "The ADAS system shall detect hazardous inconsistency between fused object motion, lane information and vehicle motion state.",
+      "evidenceStatus": "Failed",
+      "riskLevel": "High",
+      "riskStatus": "Open",
+      "owner": "System Safety Engineer",
+      "sqr": "Acceptance criterion: hazardous inconsistency shall be flagged within one processing cycle when relative object motion conflicts with ego vehicle motion above the calibrated threshold.",
+      "arch": "SafetyRiskManager",
+      "module": "safety_risk_manager.c",
+      "test": "TC_ADAS_RISK_001 HIL hazardous inconsistency injection",
+      "result": "FAILED Warning escalation timing exceeded threshold by 80 ms.",
+      "risk": "Missing robust evidence for hazardous inconsistency detection may affect FuSA, SOTIF and AI Safety assessment readiness.",
+      "dueDate": "2026-06-30"
+    },
+    {
+      "id": "QR_ADAS_Safety_FailSafe_001",
+      "characteristic": "Safety",
+      "subcharacteristic": "Fail safe",
+      "aspects": [
+        "FuSA"
+      ],
+      "text": "The ADAS system shall transition to safe state when a confirmed hazardous inconsistency persists beyond the confirmation time.",
+      "evidenceStatus": "Partial",
+      "riskLevel": "High",
+      "riskStatus": "In progress",
+      "owner": "ADAS Function Owner",
+      "sqr": "Acceptance criterion: safe state transition shall complete within the project defined fault reaction time after hazard confirmation.",
+      "arch": "SafetyStateManager",
+      "module": "safety_state_manager.c",
+      "test": "TC_ADAS_FAILSAFE_001 Safe state transition timing test",
+      "result": "PARTIAL Safe state output is correct, repeated confirmation under radar dropout is not yet completed.",
+      "risk": "Safe state reaction evidence is incomplete before Gate Review.",
+      "dueDate": "2026-06-20"
+    },
+    {
+      "id": "QR_ADAS_Performance_TimeBehaviour_001",
+      "characteristic": "Performance efficiency",
+      "subcharacteristic": "Time behaviour",
+      "aspects": [
+        "QM",
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "text": "The ADAS system shall update fused object result within 50 ms after receiving valid front camera and front radar input.",
+      "evidenceStatus": "Complete",
+      "riskLevel": "Low",
+      "riskStatus": "Closed",
+      "owner": "Performance Engineer",
+      "sqr": "Acceptance criterion: p99 end to end latency from sensor input timestamp to fused object output shall be less than or equal to 50 ms.",
+      "arch": "PerformanceResourceManager",
+      "module": "object_fusion_timing.c",
+      "test": "TC_ADAS_TIMING_001 Fusion latency stress test",
+      "result": "PASSED p99 latency measured at 43 ms under maximum configured object count.",
+      "risk": "No open timing risk for this requirement.",
+      "dueDate": "2026-05-15"
+    },
+    {
+      "id": "QR_ADAS_Security_Integrity_001",
+      "characteristic": "Security",
+      "subcharacteristic": "Integrity",
+      "aspects": [
+        "CS",
+        "FuSA"
+      ],
+      "text": "The ADAS system shall reject corrupted object list, invalid calibration checksum and unauthorized configuration changes.",
+      "evidenceStatus": "Missing",
+      "riskLevel": "High",
+      "riskStatus": "Open",
+      "owner": "Cybersecurity Engineer",
+      "sqr": "Acceptance criterion: invalid calibration checksum and corrupted object input shall be rejected and diagnostic event shall be stored.",
+      "arch": "SecurityAccessManager",
+      "module": "security_integrity_monitor.c",
+      "test": "TC_ADAS_SEC_001 Calibration checksum and corrupted object input test",
+      "result": "NOT EXECUTED Test environment pending diagnostic interface configuration.",
+      "risk": "Missing cybersecurity integrity evidence may affect CS and FuSA argument.",
+      "dueDate": "2026-07-05"
+    },
+    {
+      "id": "QR_ADAS_Interaction_Learnability_001",
+      "characteristic": "Interaction capability",
+      "subcharacteristic": "Learnability",
+      "aspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "text": "The ADAS system shall provide first use guidance for AEB warning, LKA warning, degraded mode, unavailable state and takeover request.",
+      "evidenceStatus": "Complete",
+      "riskLevel": "Low",
+      "riskStatus": "Closed",
+      "owner": "HMI Engineer",
+      "sqr": "Acceptance criterion: the HMI shall display approved first use messages before the driver starts assisted operation.",
+      "arch": "UserInteractionManager",
+      "module": "hmi_guidance_manager.c",
+      "test": "TC_ADAS_HMI_001 First use guidance message catalogue test",
+      "result": "PASSED All displayed message IDs match the approved HMI message catalogue.",
+      "risk": "No open HMI learnability risk.",
+      "dueDate": "2026-05-30"
+    }
+  ]
+}

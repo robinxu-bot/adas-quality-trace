@@ -1,0 +1,272 @@
+{
+  "modelId": "ISO_IEC_25010_PRODUCT_QUALITY",
+  "modelName": "ISO IEC 25010 Product Quality Model",
+  "standardReference": "ISO IEC 25010",
+  "rootName": "Product Quality",
+  "version": "project_common_model_v1",
+  "characteristics": [
+    {
+      "id": "QC_FunctionalSuitability",
+      "name": "Functional suitability",
+      "description": "Degree to which a product provides functions that meet stated and implied needs when used under specified conditions.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_FunctionalSuitability_FunctionalCompleteness",
+          "name": "Functional completeness",
+          "description": "Degree to which the set of functions covers all specified tasks and user objectives."
+        },
+        {
+          "id": "QSC_FunctionalSuitability_FunctionalCorrectness",
+          "name": "Functional correctness",
+          "description": "Degree to which a product provides correct results with the needed degree of precision."
+        },
+        {
+          "id": "QSC_FunctionalSuitability_FunctionalAppropriateness",
+          "name": "Functional appropriateness",
+          "description": "Degree to which functions facilitate the accomplishment of specified tasks and objectives."
+        }
+      ]
+    },
+    {
+      "id": "QC_PerformanceEfficiency",
+      "name": "Performance efficiency",
+      "description": "Performance relative to the amount of resources used under stated conditions.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_PerformanceEfficiency_TimeBehaviour",
+          "name": "Time behaviour",
+          "description": "Degree to which response time, processing time and throughput meet requirements."
+        },
+        {
+          "id": "QSC_PerformanceEfficiency_ResourceUtilization",
+          "name": "Resource utilization",
+          "description": "Degree to which the amounts and types of resources used meet requirements."
+        },
+        {
+          "id": "QSC_PerformanceEfficiency_Capacity",
+          "name": "Capacity",
+          "description": "Degree to which maximum limits of parameters meet requirements."
+        }
+      ]
+    },
+    {
+      "id": "QC_Compatibility",
+      "name": "Compatibility",
+      "description": "Degree to which a product can exchange information with other products and perform required functions while sharing the same environment.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Compatibility_CoExistence",
+          "name": "Co-existence",
+          "description": "Degree to which a product can perform required functions efficiently while sharing a common environment and resources."
+        },
+        {
+          "id": "QSC_Compatibility_Interoperability",
+          "name": "Interoperability",
+          "description": "Degree to which products can exchange information and use exchanged information."
+        }
+      ]
+    },
+    {
+      "id": "QC_InteractionCapability",
+      "name": "Interaction capability",
+      "description": "Degree to which a product enables users to interact effectively, efficiently and satisfactorily.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_InteractionCapability_AppropriatenessRecognizability",
+          "name": "Appropriateness recognizability",
+          "description": "Degree to which users can recognize whether a product is appropriate for their needs."
+        },
+        {
+          "id": "QSC_InteractionCapability_Learnability",
+          "name": "Learnability",
+          "description": "Degree to which a product can be used by specified users to achieve specified learning goals."
+        },
+        {
+          "id": "QSC_InteractionCapability_Operability",
+          "name": "Operability",
+          "description": "Degree to which a product has attributes that make it easy to operate and control."
+        },
+        {
+          "id": "QSC_InteractionCapability_UserErrorProtection",
+          "name": "User error protection",
+          "description": "Degree to which a product protects users against making errors."
+        },
+        {
+          "id": "QSC_InteractionCapability_UserEngagement",
+          "name": "User engagement",
+          "description": "Degree to which a product presents functions and information in an engaging manner."
+        },
+        {
+          "id": "QSC_InteractionCapability_Inclusivity",
+          "name": "Inclusivity",
+          "description": "Degree to which a product can be used by people with varied backgrounds and abilities."
+        },
+        {
+          "id": "QSC_InteractionCapability_UserAssistance",
+          "name": "User assistance",
+          "description": "Degree to which a product can be used by specified users to achieve specified goals with assistance."
+        },
+        {
+          "id": "QSC_InteractionCapability_SelfDescriptiveness",
+          "name": "Self-descriptiveness",
+          "description": "Degree to which a product presents information that makes its capabilities and use evident to users."
+        }
+      ]
+    },
+    {
+      "id": "QC_Reliability",
+      "name": "Reliability",
+      "description": "Degree to which a product performs specified functions under specified conditions for a specified period of time.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Reliability_Faultlessness",
+          "name": "Faultlessness",
+          "description": "Degree to which a product performs specified functions without fault under normal operation."
+        },
+        {
+          "id": "QSC_Reliability_Availability",
+          "name": "Availability",
+          "description": "Degree to which a product is operational and accessible when required for use."
+        },
+        {
+          "id": "QSC_Reliability_FaultTolerance",
+          "name": "Fault tolerance",
+          "description": "Degree to which a product operates as intended despite hardware or software faults."
+        },
+        {
+          "id": "QSC_Reliability_Recoverability",
+          "name": "Recoverability",
+          "description": "Degree to which a product can recover affected data and re-establish desired system state after interruption or failure."
+        }
+      ]
+    },
+    {
+      "id": "QC_Security",
+      "name": "Security",
+      "description": "Degree to which a product protects information and data so that persons or other products have the degree of data access appropriate to their types and levels of authorization.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Security_Confidentiality",
+          "name": "Confidentiality",
+          "description": "Degree to which data is accessible only to those authorized to have access."
+        },
+        {
+          "id": "QSC_Security_Integrity",
+          "name": "Integrity",
+          "description": "Degree to which data and system state are protected from unauthorized modification."
+        },
+        {
+          "id": "QSC_Security_NonRepudiation",
+          "name": "Non-repudiation",
+          "description": "Degree to which actions or events can be proven to have taken place."
+        },
+        {
+          "id": "QSC_Security_Accountability",
+          "name": "Accountability",
+          "description": "Degree to which actions of an entity can be traced uniquely to that entity."
+        },
+        {
+          "id": "QSC_Security_Authenticity",
+          "name": "Authenticity",
+          "description": "Degree to which the identity of a subject or resource can be proved to be the one claimed."
+        },
+        {
+          "id": "QSC_Security_Resistance",
+          "name": "Resistance",
+          "description": "Degree to which a product can resist attacks according to defined threat assumptions."
+        }
+      ]
+    },
+    {
+      "id": "QC_Maintainability",
+      "name": "Maintainability",
+      "description": "Degree of effectiveness and efficiency with which a product can be modified by intended maintainers.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Maintainability_Modularity",
+          "name": "Modularity",
+          "description": "Degree to which a product is composed of discrete components so that change has minimal impact."
+        },
+        {
+          "id": "QSC_Maintainability_Reusability",
+          "name": "Reusability",
+          "description": "Degree to which an asset can be used in more than one system or product."
+        },
+        {
+          "id": "QSC_Maintainability_Analysability",
+          "name": "Analysability",
+          "description": "Degree to which it is possible to assess impact, diagnose deficiencies or identify parts to modify."
+        },
+        {
+          "id": "QSC_Maintainability_Modifiability",
+          "name": "Modifiability",
+          "description": "Degree to which a product can be modified without introducing defects or degrading quality."
+        },
+        {
+          "id": "QSC_Maintainability_Testability",
+          "name": "Testability",
+          "description": "Degree to which test criteria can be established and tests can be performed effectively."
+        }
+      ]
+    },
+    {
+      "id": "QC_Flexibility",
+      "name": "Flexibility",
+      "description": "Degree to which a product can be adapted, scaled, installed or replaced for use in different contexts.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Flexibility_Adaptability",
+          "name": "Adaptability",
+          "description": "Degree to which a product can be adapted for different environments or use contexts."
+        },
+        {
+          "id": "QSC_Flexibility_Scalability",
+          "name": "Scalability",
+          "description": "Degree to which a product can handle changes in workload or capacity needs."
+        },
+        {
+          "id": "QSC_Flexibility_Installability",
+          "name": "Installability",
+          "description": "Degree to which a product can be successfully installed or uninstalled."
+        },
+        {
+          "id": "QSC_Flexibility_Replaceability",
+          "name": "Replaceability",
+          "description": "Degree to which a product can replace or be replaced by another product for the same purpose."
+        }
+      ]
+    },
+    {
+      "id": "QC_Safety",
+      "name": "Safety",
+      "description": "Degree to which a product does not endanger human life, health, property or the environment.",
+      "subcharacteristics": [
+        {
+          "id": "QSC_Safety_OperationalConstraint",
+          "name": "Operational constraint",
+          "description": "Degree to which a product operates within conditions that reduce risk."
+        },
+        {
+          "id": "QSC_Safety_RiskIdentification",
+          "name": "Risk identification",
+          "description": "Degree to which a product supports identification of hazards and risky situations."
+        },
+        {
+          "id": "QSC_Safety_FailSafe",
+          "name": "Fail safe",
+          "description": "Degree to which a product enters or maintains a safe state when failures occur."
+        },
+        {
+          "id": "QSC_Safety_HazardWarning",
+          "name": "Hazard warning",
+          "description": "Degree to which a product warns users or systems about hazardous situations."
+        },
+        {
+          "id": "QSC_Safety_SafeIntegration",
+          "name": "Safe integration",
+          "description": "Degree to which a product remains safe when integrated with other products or systems."
+        }
+      ]
+    }
+  ]
+}

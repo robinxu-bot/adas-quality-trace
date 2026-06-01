@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "1.0",
+  "productLineId": "ADAS",
+  "productLineName": "ADAS",
+  "qualityAspects": [
+    {
+      "id": "QM",
+      "name": "Quality Management",
+      "description": "General product quality and engineering quality concern."
+    },
+    {
+      "id": "FuSA",
+      "name": "Functional Safety",
+      "description": "Safety concern in ISO 26262 context."
+    },
+    {
+      "id": "CS",
+      "name": "Cybersecurity",
+      "description": "Cybersecurity concern in ISO SAE 21434 context."
+    },
+    {
+      "id": "SOTIF",
+      "name": "Safety of the Intended Functionality",
+      "description": "SOTIF concern in ISO 21448 context."
+    },
+    {
+      "id": "AISafety",
+      "name": "AI Safety",
+      "description": "Safety and artificial intelligence concern in ISO PAS 8800 context."
+    }
+  ],
+  "mappings": [
+    {
+      "mappingId": "ADAS_MAP_001",
+      "qualityCharacteristicId": "QC_FunctionalSuitability",
+      "qualitySubcharacteristicId": "QSC_FunctionalSuitability_FunctionalCompleteness",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "mappingReason": "ADAS functions shall cover the intended project scope and safety related operating scenarios."
+    },
+    {
+      "mappingId": "ADAS_MAP_002",
+      "qualityCharacteristicId": "QC_FunctionalSuitability",
+      "qualitySubcharacteristicId": "QSC_FunctionalSuitability_FunctionalCorrectness",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "mappingReason": "Correct perception, fusion and warning outputs are relevant to safety related behaviour and AI supported functions."
+    },
+    {
+      "mappingId": "ADAS_MAP_003",
+      "qualityCharacteristicId": "QC_FunctionalSuitability",
+      "qualitySubcharacteristicId": "QSC_FunctionalSuitability_FunctionalAppropriateness",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "Function behavior shall be appropriate for the intended usage and operating domain."
+    },
+    {
+      "mappingId": "ADAS_MAP_004",
+      "qualityCharacteristicId": "QC_PerformanceEfficiency",
+      "qualitySubcharacteristicId": "QSC_PerformanceEfficiency_TimeBehaviour",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "mappingReason": "Timing behavior affects warning latency, reaction time and AI inference related safety assurance."
+    },
+    {
+      "mappingId": "ADAS_MAP_005",
+      "qualityCharacteristicId": "QC_PerformanceEfficiency",
+      "qualitySubcharacteristicId": "QSC_PerformanceEfficiency_ResourceUtilization",
+      "qualityAspects": [
+        "QM",
+        "AI Safety"
+      ],
+      "mappingReason": "Resource usage may affect AI processing stability and runtime performance."
+    },
+    {
+      "mappingId": "ADAS_MAP_006",
+      "qualityCharacteristicId": "QC_PerformanceEfficiency",
+      "qualitySubcharacteristicId": "QSC_PerformanceEfficiency_Capacity",
+      "qualityAspects": [
+        "QM",
+        "AI Safety"
+      ],
+      "mappingReason": "Capacity is relevant to object count, scenario complexity, data volume and model service load."
+    },
+    {
+      "mappingId": "ADAS_MAP_007",
+      "qualityCharacteristicId": "QC_Compatibility",
+      "qualitySubcharacteristicId": "QSC_Compatibility_CoExistence",
+      "qualityAspects": [
+        "QM",
+        "CS"
+      ],
+      "mappingReason": "Coexistence is relevant when multiple vehicle or platform services share runtime resources or communication networks."
+    },
+    {
+      "mappingId": "ADAS_MAP_008",
+      "qualityCharacteristicId": "QC_Compatibility",
+      "qualitySubcharacteristicId": "QSC_Compatibility_Interoperability",
+      "qualityAspects": [
+        "QM",
+        "CS",
+        "FuSA"
+      ],
+      "mappingReason": "Interoperability is relevant for sensor data, vehicle state, diagnostics, safety status and security relevant interfaces."
+    },
+    {
+      "mappingId": "ADAS_MAP_009",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_AppropriatenessRecognizability",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "Driver shall recognize whether ADAS function is available, active, degraded or unavailable."
+    },
+    {
+      "mappingId": "ADAS_MAP_010",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_Learnability",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "Driver guidance and first use explanation may influence intended use and misuse prevention."
+    },
+    {
+      "mappingId": "ADAS_MAP_011",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_Operability",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "Driver operation of ADAS features shall be clear and controlled."
+    },
+    {
+      "mappingId": "ADAS_MAP_012",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_UserErrorProtection",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "mappingReason": "The system shall prevent inappropriate activation or misuse in unsupported conditions."
+    },
+    {
+      "mappingId": "ADAS_MAP_013",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_UserEngagement",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "User engagement may be relevant to HMI quality but is usually not the primary safety aspect."
+    },
+    {
+      "mappingId": "ADAS_MAP_014",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_Inclusivity",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "User population and driver understanding may affect intended use and warning comprehension."
+    },
+    {
+      "mappingId": "ADAS_MAP_015",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_UserAssistance",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "User assistance may reduce misuse and improve driver response to system status."
+    },
+    {
+      "mappingId": "ADAS_MAP_016",
+      "qualityCharacteristicId": "QC_InteractionCapability",
+      "qualitySubcharacteristicId": "QSC_InteractionCapability_SelfDescriptiveness",
+      "qualityAspects": [
+        "QM",
+        "SOTIF"
+      ],
+      "mappingReason": "Self descriptive HMI helps drivers understand system state and limitations."
+    },
+    {
+      "mappingId": "ADAS_MAP_017",
+      "qualityCharacteristicId": "QC_Reliability",
+      "qualitySubcharacteristicId": "QSC_Reliability_Faultlessness",
+      "qualityAspects": [
+        "QM",
+        "FuSA"
+      ],
+      "mappingReason": "Faultless behaviour is relevant to safety related system operation."
+    },
+    {
+      "mappingId": "ADAS_MAP_018",
+      "qualityCharacteristicId": "QC_Reliability",
+      "qualitySubcharacteristicId": "QSC_Reliability_Availability",
+      "qualityAspects": [
+        "QM",
+        "FuSA"
+      ],
+      "mappingReason": "Availability state shall be controlled and communicated for ADAS functions."
+    },
+    {
+      "mappingId": "ADAS_MAP_019",
+      "qualityCharacteristicId": "QC_Reliability",
+      "qualitySubcharacteristicId": "QSC_Reliability_FaultTolerance",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "SOTIF"
+      ],
+      "mappingReason": "ADAS shall tolerate defined faults and limitation scenarios without unsafe behaviour."
+    },
+    {
+      "mappingId": "ADAS_MAP_020",
+      "qualityCharacteristicId": "QC_Reliability",
+      "qualitySubcharacteristicId": "QSC_Reliability_Recoverability",
+      "qualityAspects": [
+        "QM",
+        "FuSA"
+      ],
+      "mappingReason": "Recovery from degraded or unavailable state shall be controlled and safe."
+    },
+    {
+      "mappingId": "ADAS_MAP_021",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_Confidentiality",
+      "qualityAspects": [
+        "CS"
+      ],
+      "mappingReason": "Confidentiality is relevant to diagnostic, configuration, user and vehicle data."
+    },
+    {
+      "mappingId": "ADAS_MAP_022",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_Integrity",
+      "qualityAspects": [
+        "CS",
+        "FuSA"
+      ],
+      "mappingReason": "Integrity of input data, calibration and configuration may affect safety related decisions."
+    },
+    {
+      "mappingId": "ADAS_MAP_023",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_NonRepudiation",
+      "qualityAspects": [
+        "CS",
+        "QM"
+      ],
+      "mappingReason": "Non repudiation may be relevant for audit trail and security event handling."
+    },
+    {
+      "mappingId": "ADAS_MAP_024",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_Accountability",
+      "qualityAspects": [
+        "CS",
+        "QM"
+      ],
+      "mappingReason": "Accountability supports traceability of configuration, diagnostic and update actions."
+    },
+    {
+      "mappingId": "ADAS_MAP_025",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_Authenticity",
+      "qualityAspects": [
+        "CS"
+      ],
+      "mappingReason": "Authenticity is relevant to trusted communication, diagnostic access and update mechanisms."
+    },
+    {
+      "mappingId": "ADAS_MAP_026",
+      "qualityCharacteristicId": "QC_Security",
+      "qualitySubcharacteristicId": "QSC_Security_Resistance",
+      "qualityAspects": [
+        "CS"
+      ],
+      "mappingReason": "Resistance is relevant to attack resistance and misuse of external interfaces."
+    },
+    {
+      "mappingId": "ADAS_MAP_027",
+      "qualityCharacteristicId": "QC_Maintainability",
+      "qualitySubcharacteristicId": "QSC_Maintainability_Modularity",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "Modularity supports controlled changes and impact analysis."
+    },
+    {
+      "mappingId": "ADAS_MAP_028",
+      "qualityCharacteristicId": "QC_Maintainability",
+      "qualitySubcharacteristicId": "QSC_Maintainability_Reusability",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "Reusability is relevant for platform or product line assets."
+    },
+    {
+      "mappingId": "ADAS_MAP_029",
+      "qualityCharacteristicId": "QC_Maintainability",
+      "qualitySubcharacteristicId": "QSC_Maintainability_Analysability",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "CS"
+      ],
+      "mappingReason": "Analysability supports change impact, safety impact and cybersecurity impact analysis."
+    },
+    {
+      "mappingId": "ADAS_MAP_030",
+      "qualityCharacteristicId": "QC_Maintainability",
+      "qualitySubcharacteristicId": "QSC_Maintainability_Modifiability",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "Modifiability supports controlled evolution without quality regression."
+    },
+    {
+      "mappingId": "ADAS_MAP_031",
+      "qualityCharacteristicId": "QC_Maintainability",
+      "qualitySubcharacteristicId": "QSC_Maintainability_Testability",
+      "qualityAspects": [
+        "QM",
+        "FuSA",
+        "CS",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "mappingReason": "Testability is required for evidence generation across quality and safety aspects."
+    },
+    {
+      "mappingId": "ADAS_MAP_032",
+      "qualityCharacteristicId": "QC_Flexibility",
+      "qualitySubcharacteristicId": "QSC_Flexibility_Adaptability",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "Adaptability may be relevant for platform variants and deployment contexts."
+    },
+    {
+      "mappingId": "ADAS_MAP_033",
+      "qualityCharacteristicId": "QC_Flexibility",
+      "qualitySubcharacteristicId": "QSC_Flexibility_Scalability",
+      "qualityAspects": [
+        "QM",
+        "AI Safety"
+      ],
+      "mappingReason": "Scalability may be relevant for AI workload, data volume and fleet service contexts."
+    },
+    {
+      "mappingId": "ADAS_MAP_034",
+      "qualityCharacteristicId": "QC_Flexibility",
+      "qualitySubcharacteristicId": "QSC_Flexibility_Installability",
+      "qualityAspects": [
+        "QM",
+        "CS"
+      ],
+      "mappingReason": "Installability may be relevant to deployment, update and secure installation."
+    },
+    {
+      "mappingId": "ADAS_MAP_035",
+      "qualityCharacteristicId": "QC_Flexibility",
+      "qualitySubcharacteristicId": "QSC_Flexibility_Replaceability",
+      "qualityAspects": [
+        "QM"
+      ],
+      "mappingReason": "Replaceability is usually less central for ADAS function assessment but may apply to platform components."
+    },
+    {
+      "mappingId": "ADAS_MAP_036",
+      "qualityCharacteristicId": "QC_Safety",
+      "qualitySubcharacteristicId": "QSC_Safety_OperationalConstraint",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF",
+        "QM"
+      ],
+      "mappingReason": "Operational constraints define allowed operating domain, activation conditions and limitation handling."
+    },
+    {
+      "mappingId": "ADAS_MAP_037",
+      "qualityCharacteristicId": "QC_Safety",
+      "qualitySubcharacteristicId": "QSC_Safety_RiskIdentification",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF",
+        "AI Safety"
+      ],
+      "mappingReason": "Risk identification is relevant for hazardous behaviour, insufficient intended functionality and AI related safety assurance."
+    },
+    {
+      "mappingId": "ADAS_MAP_038",
+      "qualityCharacteristicId": "QC_Safety",
+      "qualitySubcharacteristicId": "QSC_Safety_FailSafe",
+      "qualityAspects": [
+        "FuSA"
+      ],
+      "mappingReason": "Fail safe behaviour is a direct functional safety concern."
+    },
+    {
+      "mappingId": "ADAS_MAP_039",
+      "qualityCharacteristicId": "QC_Safety",
+      "qualitySubcharacteristicId": "QSC_Safety_HazardWarning",
+      "qualityAspects": [
+        "FuSA",
+        "SOTIF"
+      ],
+      "mappingReason": "Hazard warning supports driver awareness and response to safety relevant conditions."
+    },
+    {
+      "mappingId": "ADAS_MAP_040",
+      "qualityCharacteristicId": "QC_Safety",
+      "qualitySubcharacteristicId": "QSC_Safety_SafeIntegration",
+      "qualityAspects": [
+        "FuSA",
+        "CS",
+        "SOTIF"
+      ],
+      "mappingReason": "Safe integration is relevant when ADAS interacts with braking, steering, HMI, diagnostics and security controls."
+    }
+  ]
+}
