@@ -52,6 +52,13 @@ frontend/
         └── main.css
 ```
 
+Audit Report Dashboard additions:
+
+- `src/views/AuditReportView.js` renders the full Audit Report Dashboard.
+- `src/components/auditReport.js` renders Audit Snapshot, Quality Gate Maturity, Project Risk Posture, and Lifecycle & Process Maturity sections.
+- `src/components/dashboard.js` renders the project detail entry dashboard and may show executive risk signals, but it does not own approval or decision workflows.
+- The view structure, risk signals, and scoring semantics are defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
 ---
 
 ## 4. Module Boundaries and Contracts
@@ -133,6 +140,7 @@ export const api = {
   exportProject:            (id)                => request('GET',    `/projects/${id}/export`),
   importProject:            (data)              => request('POST',   '/projects/import', data),
   getDashboard:             (id)                => request('GET',    `/projects/${id}/dashboard`),
+  getAuditReportDashboard:  (id, params)        => request('GET',    `/projects/${id}/audit-report/dashboard${params ? '?' + new URLSearchParams(params) : ''}`),
 
   // Scope
   getScope:                 (pid)               => request('GET',    `/projects/${pid}/scope`),

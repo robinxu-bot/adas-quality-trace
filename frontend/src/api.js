@@ -27,6 +27,7 @@ export const api = {
   exportProject: (id) => request('GET', `/projects/${id}/export`),
   importProject: (data) => request('POST', '/projects/import', data),
   getDashboard: (id) => request('GET', `/projects/${id}/dashboard`),
+  getAuditReportDashboard: (id, params) => request('GET', `/projects/${id}/audit-report/dashboard${params ? '?' + new URLSearchParams(params) : ''}`),
 
   // Scope
   getScope: (pid) => request('GET', `/projects/${pid}/scope`),

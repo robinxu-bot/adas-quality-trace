@@ -540,9 +540,19 @@ The project dashboard shall show assessment readiness.
 
 ### SYSREQ PDB 008
 
-The project dashboard shall show quality aspect distribution.
+The project dashboard shall show executive risk signals derived from the Audit Report Dashboard model:
+
+- Recommended Attention Level
+- Product Risk
+- Process Maturity Risk
+- Gate Progression Signal
+- Risk Confidence
 
 ### SYSREQ PDB 009
+
+The project dashboard shall show quality aspect distribution.
+
+### SYSREQ PDB 010
 
 Quality aspect distribution shall include:
 
@@ -552,13 +562,21 @@ Quality aspect distribution shall include:
 - SOTIF
 - AI Safety
 
-### SYSREQ PDB 010
+### SYSREQ PDB 011
 
 The project dashboard shall support navigation to project quality scope editing.
 
-### SYSREQ PDB 011
+### SYSREQ PDB 012
 
 The project dashboard shall support navigation to Project Sankey Trace View.
+
+### SYSREQ PDB 013
+
+The project dashboard shall support navigation to the Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
+### SYSREQ PDB 014
+
+The dashboard shall not store approval decisions, management final decisions, or decision records.
 
 ## 10. Quality Aspect Mapping Requirements
 
@@ -724,6 +742,84 @@ The system shall provide `GET /api/v1/health` returning `{"status": "ok"}` for c
 ### SYSREQ V62 012
 
 The system shall provide `POST /api/v1/admin/seed-demo` to populate sample ADAS projects for demonstration purposes. This endpoint shall be idempotent.
+
+## 12b. Audit Report and Lifecycle Maturity Requirements
+
+### SYSREQ AUDIT 001
+
+The system shall support generating a project-level Audit Report snapshot at a specific point in time.
+
+### SYSREQ AUDIT 002
+
+The Audit Report shall include four sections: Audit Snapshot, Quality Gate Maturity, Project Risk Posture, and Lifecycle & Process Maturity.
+
+### SYSREQ AUDIT 003
+
+Quality Gate Maturity shall show QG0-QG5 maturity across the five Quality Aspects: QM, FuSA, CS, SOTIF, and AI Safety.
+
+### SYSREQ AUDIT 004
+
+Project Risk Posture shall summarise all current open project risks and separately highlight risks, evidence gaps, and actions that affect the current gate.
+
+### SYSREQ AUDIT 005
+
+Lifecycle & Process Maturity shall cover five separate lifecycle frameworks: QM Lifecycle, FuSA / ISO 26262, CS / ISO SAE 21434, SOTIF / ISO 21448, and AI Safety / ISO PAS 8800.
+
+### SYSREQ AUDIT 006
+
+SOTIF and AI Safety shall be represented as separate lifecycle frameworks. The system may trace dependencies between them, but shall not merge them into one framework.
+
+### SYSREQ AUDIT 007
+
+The minimum lifecycle maturity assessment unit shall be Activity x Gate.
+
+### SYSREQ AUDIT 008
+
+Each Activity x Gate result shall store both a maturity state and a gate judgement.
+
+### SYSREQ AUDIT 009
+
+The maturity state shall describe activity, evidence, or deliverable maturity and shall not be used to represent whether an AI-generated assessment result has been human-confirmed.
+
+### SYSREQ AUDIT 010
+
+Official maturity score shall use human-confirmed assessment results only. AI-proposed results without human confirmation shall contribute only to draft maturity score.
+
+### SYSREQ AUDIT 011
+
+Low maturity and failed Activity x Gate results shall be traceable to Evidence Items, Risk Items, and relevant trace chain context where available.
+
+### SYSREQ AUDIT 012
+
+Audit Snapshot shall show executive dashboard risk signals:
+
+- Recommended Attention Level
+- Product Risk
+- Process Maturity Risk
+- Gate Readiness
+- Risk Confidence
+
+### SYSREQ AUDIT 013
+
+Recommended Attention Level shall use the values Normal, Watch, At Risk, Critical, and Escalation Needed.
+
+### SYSREQ AUDIT 014
+
+Gate Readiness shall include Gate Progression Signal with values Ready, Conditional, Blocked, and Unknown.
+
+### SYSREQ AUDIT 015
+
+Risk Confidence shall use Evidence coverage, Trace coverage, Official assessment coverage, review freshness, and unknown or unassessed critical item ratio.
+
+### SYSREQ AUDIT 016
+
+Risk Confidence shall show reason breakdown when its value is Low or Unknown.
+
+### SYSREQ AUDIT 017
+
+The Audit Report Dashboard shall not store approval decisions, management final decisions, or decision records.
+
+Full design is defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 
 ## 13. Non Functional Requirements
 

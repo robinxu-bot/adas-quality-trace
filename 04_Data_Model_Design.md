@@ -189,6 +189,21 @@ If only part of the subcharacteristics under a characteristic are applicable, th
 
 ## 10. Dashboard Calculation Rules
 
+Dashboard calculation has two layers:
+
+1. Project entry dashboard metrics, used by the project detail landing page.
+2. Audit Report Dashboard risk signals, defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
+The project entry dashboard may show legacy counts such as scope coverage, open risks, evidence gaps, and assessment readiness. The Audit Report Dashboard shall add executive risk signals:
+
+```text
+Recommended Attention Level
+Product Risk
+Process Maturity Risk
+Gate Progression Signal
+Risk Confidence
+```
+
 ### Evidence Status Summary
 
 ```text
@@ -215,6 +230,44 @@ No high or critical open risk and no missing critical evidence → Ready
 Some medium open risk or partial evidence → Conditionally ready
 Any high or critical open risk or failed key evidence → Not ready
 ```
+
+`assessment_readiness` is kept as a project-level summary for backward compatibility. It shall not be treated as the full audit dashboard decision model.
+
+### Audit Report Dashboard Signals
+
+The following signals are calculated from risk, evidence, trace, gate assessment, and Activity x Gate result data.
+
+| Signal | Values | Primary Inputs |
+| --- | --- | --- |
+| Recommended Attention Level | Normal, Watch, At Risk, Critical, Escalation Needed | Product Risk, Process Maturity Risk, Gate Readiness, Risk Confidence |
+| Product Risk | Low, Medium, High, Critical, Unknown | Risk Items, failed checks, residual risks, evidence gaps by QM/FuSA/CS/SOTIF/AI Safety |
+| Process Maturity Risk | Low, Medium, High, Critical, Unknown | Activity x Gate maturity, P0 process blockers, evidence review state |
+| Gate Progression Signal | Ready, Conditional, Blocked, Unknown | Current Gate official maturity, P0 status, blocking evidence gaps, official coverage |
+| Risk Confidence | High, Medium, Low, Unknown | Evidence coverage, Trace coverage, Official assessment coverage, review freshness, unknown item ratio |
+
+Baseline thresholds:
+
+```text
+Evidence coverage >= 70%
+Trace coverage >= 70%
+Official assessment coverage >= 80%
+Current Gate Official maturity >= 70%
+```
+
+Risk Confidence shall expose reason breakdown when Low or Unknown.
+
+Example:
+
+```text
+Risk Confidence: Low
+Primary reason: Official assessment coverage below threshold
+Evidence coverage: 58%
+Trace coverage: 64%
+Official assessment coverage: 42%
+Critical unknown items: 7
+```
+
+Dashboard calculations shall not create or store approval decisions, management final decisions, or decision records.
 
 ## 11. Data Objects Detail
 

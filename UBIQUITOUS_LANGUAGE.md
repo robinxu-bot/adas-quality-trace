@@ -71,6 +71,25 @@
 
 ---
 
+## Audit Report and Lifecycle Maturity
+
+| Term | Definition | Aliases to avoid |
+|---|---|---|
+| **Audit Report** | A project-level report snapshot at a specific point in time, covering gate maturity, current risk posture, and lifecycle/process maturity | Single gate run report |
+| **Audit Snapshot** | The report summary section containing project identity, snapshot time, current gate, readiness, risk summary, and maturity scores | Executive summary only |
+| **Quality Gate Maturity** | The report view that groups Activity Gate Results by QG0-QG5, Quality Aspect, and Quality Characteristic/Subcharacteristic | Gate score only |
+| **Project Risk Posture** | The report view that summarises all current open project risks and separately highlights Current Gate Impact | Risk list only |
+| **Lifecycle & Process Maturity** | The report view that groups Activity Gate Results by lifecycle framework, phase, activity, and gate progression | ASPICE score |
+| **Lifecycle Framework** | One of the fixed lifecycle groups: QM, FuSA / ISO 26262, CS / ISO SAE 21434, SOTIF / ISO 21448, AI Safety / ISO PAS 8800 | Process domain |
+| **Lifecycle Activity** | A standard or project-tailored activity within a Lifecycle Framework, such as HARA, TARA, scenario coverage, or AI safety argument evaluation | Checklist row |
+| **Activity Gate Result** | The result for one Lifecycle Activity at one Quality Gate; stores maturity state and gate judgement | Check result |
+| **Maturity State** | The 0-4 activity/evidence/deliverable maturity state: Not assessed, Insufficient, In progress, Evidence complete, Deliverable accepted | AI review status |
+| **Gate Judgement** | The pass/fail style judgement for an Activity Gate Result: Pass, Fail, Waived, Not Assessed, Not Applicable | Maturity level |
+| **Official Maturity Score** | A report score computed from human-confirmed Activity Gate Results only; unconfirmed applicable items count as Not assessed | Final AI score |
+| **Draft Maturity Score** | A report score computed from human-confirmed results plus confidence-weighted AI proposed results | Official score |
+
+---
+
 ## Views and Workflows
 
 | Term | Definition | Aliases to avoid |

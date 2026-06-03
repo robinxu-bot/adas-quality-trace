@@ -17,13 +17,21 @@ import {
   filterGraph,
   renderSankey,
   renderDetail,
-  branch,
 } from '../components/sankey.js'
 
 const $ = id => document.getElementById(id)
 
 // Raw unfiltered graph for the current project (rebuilt when /full data changes)
 let _rawGraph = null
+
+const DEFAULT_PROJECT_FILTERS = {
+  char: 'All',
+  aspect: 'All',
+  risk: 'All',
+  evidence: 'All',
+  search: '',
+  showExcluded: false,
+}
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
@@ -36,6 +44,7 @@ export async function loadAndRenderProjectSankey() {
   if (!project) return
 
   $('projectSankey').innerHTML = '<div class="loading">Loading trace data…</div>'
+  S.filters = { ...DEFAULT_PROJECT_FILTERS }
 
   try {
     const fullData = await api.getProjectFull(project.id)
@@ -61,6 +70,10 @@ export function rerenderProjectSankey() {
   _rebuildAndRender()
 }
 
+export function invalidateProjectSankeyGraph() {
+  _rawGraph = null
+}
+
 // ─── Internal ─────────────────────────────────────────────────────────────────
 
 function _rebuildAndRender() {
@@ -82,31 +95,12 @@ function _rebuildAndRender() {
 
   renderSankey('projectSankey', filtered, {
     selected: S.selectedNode,
-    onSelect: (node) => {
-      S.selectedNode = node.id
-      renderDetail('projectNodeDetail', node, _rawGraph)
-      // Re-render to update highlight — use full unfiltered graph for branch()
-      const reFiltered = filterGraph(_rawGraph, {
-        char: S.filters?.char ?? 'All',
-        aspect: S.filters?.aspect ?? 'All',
-        risk: S.filters?.risk ?? 'All',
-        evidence: S.filters?.evidence ?? 'All',
-        search: S.filters?.search ?? '',
-      })
-      renderSankey('projectSankey', reFiltered, {
-        selected: S.selectedNode,
-        onSelect: (n) => {
-          S.selectedNode = n.id
-          renderDetail('projectNodeDetail', n, _rawGraph)
-          rerenderProjectSankey()
-        },
-      })
-    },
+    onSelect: _toggleProjectNode,
+    onClear: _clearProjectSelection,
   })
 
   const _onSelectFromDetail = (node) => {
-    S.selectedNode = node.id
-    rerenderProjectSankey()
+    _toggleProjectNode(node)
   }
 
   renderDetail(
@@ -115,6 +109,17 @@ function _rebuildAndRender() {
     _rawGraph,
     _onSelectFromDetail,
   )
+}
+
+function _toggleProjectNode(node) {
+  S.selectedNode = S.selectedNode === node.id ? null : node.id
+  rerenderProjectSankey()
+}
+
+function _clearProjectSelection() {
+  if (!S.selectedNode) return
+  S.selectedNode = null
+  rerenderProjectSankey()
 }
 
 function _renderFilters() {

@@ -10,6 +10,8 @@ Gate Assessment results feed directly into the Project Dashboard:
 
 The checklist source is `PA33_Product_Assessment_Lifecycle_Checklist_Combined_UL_Texus_v0_1.xlsx`, sheet `03_QG_Check_Matrix`.
 
+`22_Audit_Report_And_Lifecycle_Maturity_Design.md` generalises this checklist model into an Activity x Gate lifecycle maturity model for audit reporting. The Gate Assessment tables may remain the first implementation slice, but the long-term report model covers QM, FuSA, CS, SOTIF, and AI Safety lifecycle activities.
+
 ---
 
 ## 2. Quality Gate Lifecycle
@@ -229,3 +231,4 @@ The Excel file path: `data/PA33_Product_Assessment_Lifecycle_Checklist_Combined_
 - Automated email notifications on gate fail
 - Cross-project gate comparison
 - Custom checklist items beyond the standard 17 subcharacteristics
+- Full audit report generation and Integrated Lifecycle & Process Maturity scoring; see `22_Audit_Report_And_Lifecycle_Maturity_Design.md`

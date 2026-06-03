@@ -545,7 +545,30 @@ postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGR
 
 ## 13. Dashboard Calculation Queries
 
+This section covers the project detail dashboard and the Audit Report Dashboard. The full Audit Report Dashboard logic is defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
+The dashboard feature shall not add tables for approval decisions or management decision records. If a future workflow module owns decisions, it shall be specified separately.
+
 Used by `GET /api/v1/projects/{id}/dashboard`:
+
+Additional executive risk signals are computed in service code:
+
+| Signal | Source Tables / Data |
+| --- | --- |
+| Recommended Attention Level | Aggregated from Product Risk, Process Maturity Risk, Gate Readiness, and Risk Confidence |
+| Product Risk | `risk_items`, `evidence_items`, `test_results`, assessment failures by Quality Aspect |
+| Process Maturity Risk | Activity x Gate result tables from the audit/lifecycle maturity slice |
+| Gate Progression Signal | Current gate official maturity, P0 results, blocking evidence gaps, official coverage |
+| Risk Confidence | Evidence coverage, trace coverage, official assessment coverage, review freshness, unknown critical item ratio |
+
+Baseline thresholds:
+
+```text
+Evidence coverage >= 70%
+Trace coverage >= 70%
+Official assessment coverage >= 80%
+Current Gate Official maturity >= 70%
+```
 
 **Selected subcharacteristics count**
 ```sql

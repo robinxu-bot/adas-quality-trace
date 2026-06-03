@@ -89,6 +89,14 @@ export async function renderProjectDetail() {
   $('pTitle').textContent = p.name
   $('pInfo').textContent = `${p.product_line} · ${p.phase} · ${p.system_boundary}`
 
+  const auditPanel = $('auditReportPanel')
+  if (auditPanel) {
+    auditPanel.classList.add('hidden')
+    auditPanel.innerHTML = ''
+  }
+  const auditBtn = $('toggleAuditReportBtn')
+  if (auditBtn) auditBtn.classList.remove('active')
+
   // Load dashboard metrics from API
   try {
     const dash = await api.getDashboard(p.id)
@@ -119,12 +127,12 @@ export async function renderProjectDetail() {
     renderActions('actionsPanel', pid),
   ])
 
-  // Load trace chain management panel
-  await _renderTracePanel(p)
-
-  // Auto-load Project Sankey by default
+  // Auto-load Project Sankey first so Trace Chain Management can reuse /full data
   const { loadAndRenderProjectSankey } = await import('./ProjectSankey.js')
   await loadAndRenderProjectSankey()
+
+  // Load trace chain management panel from the same normalized graph data
+  await _renderTracePanel(p)
 }
 
 async function _renderTracePanel(project) {
@@ -146,7 +154,7 @@ async function _renderTracePanel(project) {
     refreshBtn.onclick = async () => {
       let ae = []
       try { ae = await api.getArchElements(project.id) } catch { /* ok */ }
-      await renderTraceChain('traceChainPanel', project, ae)
+      await renderTraceChain('traceChainPanel', project, ae, true)
     }
   }
 }

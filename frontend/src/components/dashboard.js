@@ -23,6 +23,12 @@ function tag(a) { return `<span class="tag">${a}</span>` }
  */
 export function renderDashboardStats(dash) {
   $('pStats').innerHTML = [
+    ['Recommended Attention', dash.recommended_attention_level],
+    ['Product Risk', dash.product_risk],
+    ['Process Maturity Risk', dash.process_maturity_risk],
+    ['Gate Progression Signal', dash.gate_progression_signal],
+    ['Risk Confidence', dash.risk_confidence?.level],
+    ['Current Gate Maturity', dash.current_gate_official_maturity != null ? `${dash.current_gate_official_maturity}%` : null],
     ['Selected Characteristics', dash.selected_characteristics_count],
     ['Selected Subcharacteristics', dash.selected_subchar_count],
     ['Excluded Items', dash.excluded_count],
@@ -121,9 +127,19 @@ export function renderAspectDistribution(dash, scope = []) {
  * @param {object} dash - DashboardOut
  */
 export function renderRiskSummary(dash) {
+  const confidence = dash.risk_confidence ?? {}
   $('riskTable').innerHTML = `
     <table>
       <tbody>
+        <tr><td>Recommended attention</td><td>${statusBadge(dash.recommended_attention_level)}</td></tr>
+        <tr><td>Product risk</td><td>${statusBadge(dash.product_risk)}</td></tr>
+        <tr><td>Process maturity risk</td><td>${statusBadge(dash.process_maturity_risk)}</td></tr>
+        <tr><td>Gate progression signal</td><td>${statusBadge(dash.gate_progression_signal)}</td></tr>
+        <tr><td>Risk confidence</td><td>${statusBadge(confidence.level)}<p>${confidence.primary_reason ?? ''}</p></td></tr>
+        <tr><td>Evidence coverage</td><td>${confidence.evidence_coverage ?? 0}%</td></tr>
+        <tr><td>Trace coverage</td><td>${confidence.trace_coverage ?? 0}%</td></tr>
+        <tr><td>Official assessment coverage</td><td>${confidence.official_assessment_coverage ?? 0}%</td></tr>
+        <tr><td>Critical unknowns</td><td>${statusBadge(String(confidence.critical_unknown_count ?? 0))}</td></tr>
         <tr><td>Open risks</td><td>${statusBadge(String(dash.open_risk_count))}</td></tr>
         <tr><td>High risks</td><td>${statusBadge(String(dash.high_risk_count))}</td></tr>
         <tr><td>Critical risks</td><td>${statusBadge(String(dash.critical_risk_count))}</td></tr>

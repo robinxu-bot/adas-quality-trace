@@ -124,6 +124,10 @@ Transform PQRETS into a deployable client-server application. Full specification
 - `17_Database_Schema_Design.md` — PostgreSQL table definitions, indexes, seed strategy
 - `18_Frontend_Engineering_Plan.md` — frontend module structure, migration steps from V5.9.1
 - `19_Deployment_Guide.md` — Docker Compose setup, Nginx config, backup/restore
+- `20_Gate_Assessment_Design.md` — QG0-QG5 gate assessment model
+- `21_AI_Agent_Integration_Spec.md` — AI-proposed gate assessment result submission
+- `22_Audit_Report_And_Lifecycle_Maturity_Design.md` — audit report views and Activity x Gate lifecycle maturity model
+- `23_Audit_Report_Dashboard_Implementation_Tasks.md` — vertical implementation slices for the audit report dashboard
 
 **Development approach:** Vertical slices — each slice delivers a complete, working feature end-to-end (backend API + frontend UI). Backend is implemented and verified first within each slice; frontend connects to the real API (no mocks).
 
@@ -255,6 +259,29 @@ Deployment:
 - `frontend/npm run build` → `nginx/static/`
 
 Acceptance: Export produces a valid JSON file; import restores a project from that file; `docker compose up` on a clean machine starts the full system; demo seed populates two ADAS projects.
+
+---
+
+##### Slice 8 — Audit Report + Lifecycle Maturity
+
+Backend:
+- Built-in Lifecycle Activity library for QM, FuSA / ISO 26262, CS / ISO SAE 21434, SOTIF / ISO 21448, and AI Safety / ISO PAS 8800
+- Project-level lifecycle activity applicability tailoring
+- Activity x Gate definitions and Activity Gate Results
+- Official and draft maturity score calculation
+- Trace links from Activity Gate Results to Evidence Items, Risk Items, and trace chain nodes
+- Audit Report Dashboard service for Recommended Attention Level, Product Risk, Process Maturity Risk, Gate Progression Signal, and Risk Confidence
+- Risk Confidence reason breakdown when Low or Unknown
+- No approval decision or management decision record persistence in this slice
+
+Frontend:
+- Audit Report view with Audit Snapshot, Quality Gate Maturity, Project Risk Posture, and Lifecycle & Process Maturity
+- Executive Audit Snapshot cards for Recommended Attention Level, Product Risk, Process Maturity Risk, Gate Progression Signal, and Risk Confidence
+- Gate-centred maturity heatmap across QG0-QG5 and five Quality Aspects
+- Lifecycle/framework-centred maturity chart using ASPICE-like visual style without claiming formal ASPICE capability level
+- Drill-down from low maturity or failed items to evidence gaps, risks, and trace chain context
+
+Acceptance: A project audit report can be generated at a snapshot time; Audit Snapshot shows the five executive risk signals; Gate Progression Signal uses Ready, Conditional, Blocked, or Unknown; Risk Confidence shows reason breakdown when Low or Unknown; official score uses only human-confirmed assessment results; draft score uses human-confirmed plus confidence-weighted AI-proposed results; SOTIF and AI Safety are separate lifecycle frameworks; the dashboard does not persist approval decisions or management decision records.
 
 ---
 

@@ -461,6 +461,7 @@ export function renderSankey(elementId, data, opts = {}) {
     .attr('viewBox', `0 0 ${W} ${H}`)
     .style('min-width', opts.mini ? '0' : opts.common ? '2100px' : '2200px')
     .style('height', `${H}px`)
+    .on('click', () => opts.onClear && opts.onClear())
 
   // Layer header lines
   if (!opts.mini) {
@@ -506,7 +507,10 @@ export function renderSankey(elementId, data, opts = {}) {
     .style('opacity', n =>
       opts.mini ? 1 : (!opts.selected || n.id === opts.selected || br.ids.has(n.id) ? 1 : 0.15)
     )
-    .on('click', (e, n) => opts.onSelect && opts.onSelect(n))
+    .on('click', (e, n) => {
+      e.stopPropagation()
+      opts.onSelect && opts.onSelect(n)
+    })
 
   ng.append('rect')
     .attr('x', n => n.x0).attr('y', n => n.y0)

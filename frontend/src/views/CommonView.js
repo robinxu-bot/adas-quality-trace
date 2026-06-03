@@ -79,21 +79,20 @@ function _renderCommonSankey() {
   renderSankey('commonSankey', _commonGraphData, {
     common: true,
     selected: S.commonNode,
-    onSelect: (node) => {
-      S.commonNode = node.id
-      renderDetail('commonDetail', node, _commonGraphData)
-      // Re-render sankey with new selection highlight (no full re-render needed)
-      renderSankey('commonSankey', _commonGraphData, {
-        common: true,
-        selected: S.commonNode,
-        onSelect: (n) => {
-          S.commonNode = n.id
-          renderDetail('commonDetail', n, _commonGraphData)
-          _renderCommonSankey()
-        },
-      })
-    },
+    onSelect: _toggleCommonNode,
+    onClear: _clearCommonSelection,
   })
 
   renderDetail('commonDetail', _commonGraphData.nodes.find(n => n.id === S.commonNode) ?? null, _commonGraphData)
+}
+
+function _toggleCommonNode(node) {
+  S.commonNode = S.commonNode === node.id ? null : node.id
+  _renderCommonSankey()
+}
+
+function _clearCommonSelection() {
+  if (!S.commonNode) return
+  S.commonNode = null
+  _renderCommonSankey()
 }

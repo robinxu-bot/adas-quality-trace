@@ -803,11 +803,29 @@ GET /api/v1/projects/{id}/dashboard
 
 Returns pre-computed dashboard metrics.
 
+This endpoint returns the project detail landing dashboard. It may include executive risk signals derived from the Audit Report Dashboard model, but it does not store approval decisions or management decision records.
+
 **Response 200**
 
 ```json
 {
   "project_id": "PRJ-001",
+  "recommended_attention_level": "At Risk",
+  "product_risk": "Medium",
+  "process_maturity_risk": "High",
+  "gate_progression_signal": "Conditional",
+  "risk_confidence": "Low",
+  "risk_confidence_reasons": {
+    "primary_reason": "Official assessment coverage below threshold",
+    "evidence_coverage": 58,
+    "trace_coverage": 64,
+    "official_assessment_coverage": 42,
+    "review_freshness": 71,
+    "critical_unknown_count": 7
+  },
+  "current_gate": "QG2",
+  "current_gate_official_maturity": 62,
+  "current_gate_p0_status": "No P0 Fail",
   "selected_characteristics_count": 7,
   "selected_subchar_count": 18,
   "excluded_count": 29,
@@ -831,6 +849,69 @@ Returns pre-computed dashboard metrics.
 ```
 
 **`assessment_readiness` values:** `"Ready"` | `"Conditionally ready"` | `"Not ready"`
+
+**`recommended_attention_level` values:** `"Normal"` | `"Watch"` | `"At Risk"` | `"Critical"` | `"Escalation Needed"`
+
+**`product_risk` / `process_maturity_risk` values:** `"Low"` | `"Medium"` | `"High"` | `"Critical"` | `"Unknown"`
+
+**`gate_progression_signal` values:** `"Ready"` | `"Conditional"` | `"Blocked"` | `"Unknown"`
+
+**`risk_confidence` values:** `"High"` | `"Medium"` | `"Low"` | `"Unknown"`
+
+---
+
+### 12.1 Audit Report Dashboard
+
+```
+GET /api/v1/projects/{id}/audit-report/dashboard
+```
+
+Returns the full Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
+The response is a generated snapshot payload. It is a risk display and attention mechanism; it does not create or update approval decisions, management final decisions, or decision records.
+
+**Query parameters**
+
+| Parameter | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `snapshot_at` | ISO datetime | No | Defaults to current server time |
+| `current_gate` | string | No | Defaults to the project's current gate when available |
+
+**Response 200**
+
+```json
+{
+  "project_id": "PRJ-001",
+  "snapshot_at": "2026-06-02T10:00:00+09:00",
+  "current_gate": "QG2",
+  "audit_snapshot": {
+    "recommended_attention_level": "At Risk",
+    "product_risk": "Medium",
+    "process_maturity_risk": "High",
+    "gate_readiness": {
+      "official_maturity": 62,
+      "p0_status": "No P0 Fail",
+      "blocking_gap_count": 3,
+      "gate_progression_signal": "Conditional"
+    },
+    "risk_confidence": {
+      "level": "Low",
+      "primary_reason": "Official assessment coverage below threshold",
+      "evidence_coverage": 58,
+      "trace_coverage": 64,
+      "official_assessment_coverage": 42,
+      "review_freshness": 71,
+      "critical_unknown_count": 7
+    },
+    "official_integrated_score": 45,
+    "draft_integrated_score": 69,
+    "pending_human_confirmation_count": 18
+  },
+  "quality_gate_maturity": [],
+  "project_risk_posture": {},
+  "lifecycle_process_maturity": []
+}
+```
 
 ---
 

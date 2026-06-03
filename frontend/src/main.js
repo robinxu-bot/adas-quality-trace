@@ -9,6 +9,7 @@ import {
   loadAndRenderProjectSankey,
   initProjectSankeyFilters,
 } from './views/ProjectSankey.js'
+import { loadAndRenderAuditReport } from './views/AuditReportView.js'
 
 const $ = id => document.getElementById(id)
 
@@ -126,6 +127,17 @@ $('toggleTraceBtn').addEventListener('click', async () => {
   } else {
     traceDiv.classList.add('hidden')
     $('toggleTraceBtn').classList.remove('active')
+  }
+})
+
+$('toggleAuditReportBtn').addEventListener('click', async () => {
+  if (!S.selectedProject) return
+  const panel = $('auditReportPanel')
+  const isHidden = panel.classList.contains('hidden')
+  panel.classList.toggle('hidden', !isHidden)
+  $('toggleAuditReportBtn').classList.toggle('active', isHidden)
+  if (isHidden) {
+    await loadAndRenderAuditReport(S.selectedProject.id)
   }
 })
 

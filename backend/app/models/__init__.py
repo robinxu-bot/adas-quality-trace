@@ -6,6 +6,11 @@ from app.models.common import (  # noqa: F401
     ProductLineRecommendation,
     ProductLineRecommendationAspect,
 )
+from app.models.assessment import (  # noqa: F401
+    AssessmentGateDefinition,
+    AssessmentRun,
+    AssessmentCheckResult,
+)
 from app.models.project import (  # noqa: F401
     Project,
     ProjectScopeDecision,
