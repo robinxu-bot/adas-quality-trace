@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760">
+  <rect width="1500" height="760" fill="#f5f7fb"/>
+  <style>
+    .title{font:700 34px Arial,sans-serif;fill:#0f172a}.sub{font:400 18px Arial,sans-serif;fill:#334155}
+    .card{fill:#fff;stroke:#dbe3ee;stroke-width:2}.head{font:700 22px Arial,sans-serif;fill:#0f172a}
+    .txt{font:400 18px Arial,sans-serif;fill:#334155}.num{font:700 44px Arial,sans-serif;fill:#0f172a}
+    .line{stroke:#dbe3ee;stroke-width:2}.bar1{fill:#ef4444}.bar2{fill:#f97316}.bar3{fill:#facc15}.bar4{fill:#22c55e}
+    .call{fill:#1d4ed8}.callText{font:700 17px Arial,sans-serif;fill:#fff}.pill{fill:#fff1f2;stroke:#fda4af}
+    .pillText{font:700 17px Arial,sans-serif;fill:#be123c}
+  </style>
+  <rect x="30" y="30" width="1440" height="690" rx="18" class="card"/>
+  <text x="60" y="80" class="title">Project Risk Posture</text>
+  <text x="60" y="114" class="sub">All open project risks · Current gate impact highlighted</text>
+
+  <g transform="translate(60,155)">
+    <rect width="320" height="140" rx="14" class="card"/>
+    <circle cx="282" cy="28" r="16" class="call"/><text x="277" y="34" class="callText">1</text>
+    <text x="28" y="62" class="num">18</text><text x="28" y="104" class="head">Open Risks</text>
+  </g>
+  <g transform="translate(410,155)">
+    <rect width="320" height="140" rx="14" class="card"/>
+    <circle cx="282" cy="28" r="16" class="call"/><text x="277" y="34" class="callText">2</text>
+    <text x="28" y="62" class="num">5</text><text x="28" y="104" class="head">High / Critical</text>
+  </g>
+  <g transform="translate(760,155)">
+    <rect width="320" height="140" rx="14" class="card"/>
+    <circle cx="282" cy="28" r="16" class="call"/><text x="277" y="34" class="callText">3</text>
+    <text x="28" y="62" class="num">3</text><text x="28" y="104" class="head">Gate Blockers</text>
+  </g>
+  <g transform="translate(1110,155)">
+    <rect width="330" height="140" rx="14" class="card"/>
+    <circle cx="292" cy="28" r="16" class="call"/><text x="287" y="34" class="callText">4</text>
+    <rect x="28" y="28" width="76" height="32" rx="16" class="pill"/><text x="44" y="50" class="pillText">FuSA</text>
+    <text x="28" y="104" class="head">Largest Risk Aspect</text>
+  </g>
+
+  <g transform="translate(60,335)">
+    <rect width="680" height="260" rx="14" class="card"/>
+    <text x="24" y="44" class="head">Severity distribution</text>
+    <line x1="24" y1="70" x2="656" y2="70" class="line"/>
+    <text x="24" y="110" class="txt">Critical</text><rect x="160" y="86" width="90" height="28" rx="6" class="bar1"/><text x="270" y="109" class="txt">2</text>
+    <text x="24" y="150" class="txt">High</text><rect x="160" y="126" width="135" height="28" rx="6" class="bar2"/><text x="315" y="149" class="txt">3</text>
+    <text x="24" y="190" class="txt">Medium</text><rect x="160" y="166" width="270" height="28" rx="6" class="bar3"/><text x="450" y="189" class="txt">6</text>
+    <text x="24" y="230" class="txt">Low</text><rect x="160" y="206" width="315" height="28" rx="6" class="bar4"/><text x="495" y="229" class="txt">7</text>
+  </g>
+
+  <g transform="translate(780,335)">
+    <rect width="660" height="260" rx="14" class="card"/>
+    <text x="24" y="44" class="head">Risk by quality aspect</text>
+    <line x1="24" y1="70" x2="636" y2="70" class="line"/>
+    <text x="24" y="110" class="txt">FuSA</text><rect x="160" y="86" width="280" height="28" rx="6" fill="#f97316"/><text x="460" y="109" class="txt">6</text>
+    <text x="24" y="150" class="txt">SOTIF</text><rect x="160" y="126" width="190" height="28" rx="6" fill="#facc15"/><text x="370" y="149" class="txt">4</text>
+    <text x="24" y="190" class="txt">AI Safety</text><rect x="160" y="166" width="145" height="28" rx="6" fill="#ef4444"/><text x="325" y="189" class="txt">3</text>
+    <text x="24" y="230" class="txt">CS / QM</text><rect x="160" y="206" width="235" height="28" rx="6" fill="#22c55e"/><text x="415" y="229" class="txt">5</text>
+  </g>
+
+  <text x="60" y="655" class="txt">Reading rule: start from all open risks, then identify high severity, current gate blockers, and the quality aspect where risk is concentrated.</text>
+</svg>

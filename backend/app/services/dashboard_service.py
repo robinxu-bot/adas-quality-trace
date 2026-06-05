@@ -1,5 +1,8 @@
 """Dashboard metric computation for a project."""
+import json
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
+from pathlib import Path
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +14,10 @@ from app.models.project import (
     SoftwareModule, ArchitectureElement, QualityGoal, QualityRequirement,
     SubQualityRequirement,
 )
+from app.models.assessment import (
+    AssessmentGateDefinition, AssessmentRun, AssessmentCheckResult,
+)
+from app.models.common import CommonSubcharacteristic, CommonCharacteristic
 from app.models.enums import (
     ApplicabilityValue, RiskItemStatus, RiskLevel,
     FindingStatus, ActionStatus, TestResultValue, EvidenceStatus, ReviewStatus,
@@ -18,11 +25,12 @@ from app.models.enums import (
 from app.schemas.dashboard import (
     DashboardOut,
     AspectStats,
-    AuditReportDashboardOut,
+    AssessmentDashboardOut,
     AuditSnapshotOut,
     GateReadinessOut,
     RiskConfidenceOut,
 )
+from app.services.gate_seed_service import seed_gate_definitions
 from app.constants import ASPECTS, INCLUDED_APPLICABILITY, EXCLUDED_APPLICABILITY
 
 
@@ -259,13 +267,13 @@ def _compute_readiness(open_high_plus: int, evidence_gaps: int) -> str:
     return "Not ready"
 
 
-async def compute_audit_report_dashboard(
+async def compute_assessment_dashboard(
     session: AsyncSession,
     project: Project,
     snapshot_at: datetime | None = None,
     current_gate: str | None = None,
-) -> AuditReportDashboardOut:
-    """Build the first Audit Report Dashboard snapshot shell.
+) -> AssessmentDashboardOut:
+    """Build the first Assessment Dashboard snapshot shell.
 
     Slice 1 intentionally derives safe executive signals from existing project
     dashboard metrics. Later slices replace these placeholders with Activity x
@@ -293,7 +301,6 @@ async def compute_audit_report_dashboard(
     )
 
     official_score = _initial_official_score(dash)
-    draft_score = max(official_score, min(100, official_score + 10))
     risk_posture = await _compute_project_risk_posture(
         session=session,
         project_id=project.id,
@@ -306,8 +313,15 @@ async def compute_audit_report_dashboard(
         current_gate=gate,
         quality_gate_maturity=quality_gate_maturity,
     )
+    quality_subcharacteristic_maturity = await _compute_quality_subcharacteristic_maturity(
+        session=session,
+        project_id=project.id,
+        current_gate=gate,
+        quality_gate_maturity=quality_gate_maturity,
+    )
+    team_activity_work_product_matrix = _compute_team_activity_work_product_matrix(lifecycle_maturity)
 
-    return AuditReportDashboardOut(
+    return AssessmentDashboardOut(
         project_id=project.id,
         snapshot_at=snapshot_time.isoformat(),
         current_gate=gate,
@@ -323,15 +337,18 @@ async def compute_audit_report_dashboard(
             ),
             risk_confidence=risk_confidence,
             official_integrated_score=official_score,
-            draft_integrated_score=draft_score,
-            pending_human_confirmation_count=0,
             open_risk_count=dash.open_risk_count,
             evidence_gap_count=dash.evidence_gap_count,
         ),
         quality_gate_maturity=quality_gate_maturity,
         project_risk_posture=risk_posture,
+        quality_subcharacteristic_maturity=quality_subcharacteristic_maturity,
         lifecycle_process_maturity=lifecycle_maturity,
+        team_activity_work_product_matrix=team_activity_work_product_matrix,
     )
+
+
+compute_audit_report_dashboard = compute_assessment_dashboard
 
 
 async def _compute_quality_gate_maturity(
@@ -496,6 +513,166 @@ async def _compute_project_risk_posture(
     }
 
 
+async def _compute_quality_subcharacteristic_maturity(
+    session: AsyncSession,
+    project_id: str,
+    current_gate: str,
+    quality_gate_maturity: list[dict],
+) -> list[dict]:
+    scope_result = await session.execute(
+        select(ProjectScopeDecision, CommonSubcharacteristic, CommonCharacteristic)
+        .join(CommonSubcharacteristic, ProjectScopeDecision.subchar_id == CommonSubcharacteristic.id)
+        .join(CommonCharacteristic, CommonSubcharacteristic.characteristic_id == CommonCharacteristic.id)
+        .where(ProjectScopeDecision.project_id == project_id)
+        .order_by(CommonCharacteristic.display_order, CommonSubcharacteristic.display_order)
+    )
+    scope_rows = scope_result.all()
+    included_rows = [
+        (decision, subchar, characteristic)
+        for decision, subchar, characteristic in scope_rows
+        if decision.applicability in INCLUDED_APPLICABILITY
+    ]
+
+    req_result = await session.execute(
+        select(QualityRequirement, ProjectScopeDecision)
+        .join(QualityGoal, QualityRequirement.goal_id == QualityGoal.id)
+        .join(ProjectScopeDecision, QualityGoal.scope_decision_id == ProjectScopeDecision.id)
+        .where(ProjectScopeDecision.project_id == project_id)
+    )
+    req_scope_pairs = req_result.all()
+
+    risk_result = await session.execute(
+        select(RiskItem)
+        .where(RiskItem.project_id == project_id, RiskItem.status == RiskItemStatus.Open)
+    )
+    open_risks = risk_result.scalars().all()
+    qg_by_aspect = {row["aspect"]: row for row in quality_gate_maturity}
+    mapping_reasons = _quality_aspect_mapping_reasons()
+
+    rows: list[dict] = []
+    for decision, subchar, characteristic in included_rows:
+        mapped_aspects = [
+            aspect for aspect in (decision.selected_quality_aspects or [])
+            if aspect in qg_by_aspect
+        ]
+        aspect_breakdown = []
+        aspect_mapping_reasons = {
+            aspect: mapping_reasons.get((subchar.id, aspect), _scope_only_mapping_reason(aspect))
+            for aspect in mapped_aspects
+        }
+
+        for aspect in mapped_aspects:
+            aspect_reqs = [
+                req for req, req_decision in req_scope_pairs
+                if req_decision.id == decision.id
+                and (not req.applicable_aspects or aspect in req.applicable_aspects)
+            ]
+            aspect_risks = [
+                risk for risk in open_risks
+                if aspect in (risk.quality_aspects or [])
+            ]
+            blocking_risks = [
+                risk for risk in aspect_risks
+                if _enum_value(risk.risk_level) in {"Critical", "High"}
+            ]
+            gate_row = qg_by_aspect.get(aspect, {})
+            activity_maturity = gate_row.get("official_maturity")
+            evidence_coverage = _requirement_evidence_coverage(aspect_reqs)
+            score = _attribute_aspect_score(
+                activity_maturity=activity_maturity,
+                evidence_coverage=evidence_coverage,
+                blocking_gap_count=len(blocking_risks),
+            )
+            aspect_breakdown.append({
+                "aspect": aspect,
+                "score": score,
+                "activity_maturity": activity_maturity,
+                "evidence_coverage": evidence_coverage,
+                "open_risk_count": len(aspect_risks),
+                "blocking_gap_count": len(blocking_risks),
+                "mapping_reason": aspect_mapping_reasons.get(aspect),
+                "reason": _attribute_aspect_reason(
+                    score=score,
+                    evidence_coverage=evidence_coverage,
+                    blocking_gap_count=len(blocking_risks),
+                    activity_maturity=activity_maturity,
+                ),
+            })
+
+        if aspect_breakdown:
+            score = round(sum(item["score"] for item in aspect_breakdown) / len(aspect_breakdown))
+            weakest = min(aspect_breakdown, key=lambda item: item["score"])
+            evidence_coverage = round(
+                sum(item["evidence_coverage"] for item in aspect_breakdown) / len(aspect_breakdown)
+            )
+            blocking_gap_count = sum(item["blocking_gap_count"] for item in aspect_breakdown)
+            main_weakness = f'{weakest["aspect"]}: {weakest["reason"]}'
+        else:
+            score = 0
+            weakest = None
+            evidence_coverage = 0
+            blocking_gap_count = 0
+            main_weakness = "No mapped quality aspect in current scope"
+
+        rows.append({
+            "quality_characteristic": characteristic.name,
+            "quality_subcharacteristic": subchar.name,
+            "gate": current_gate,
+            "overall_maturity": score,
+            "maturity_band": _score_band(score),
+            "mapped_aspects": mapped_aspects,
+            "aspect_mapping_reasons": aspect_mapping_reasons,
+            "weakest_aspect": weakest["aspect"] if weakest else "Unknown",
+            "evidence_coverage": evidence_coverage,
+            "blocking_gap_count": blocking_gap_count,
+            "main_weakness": main_weakness,
+            "aspect_breakdown": aspect_breakdown,
+        })
+
+    return sorted(rows, key=lambda row: (
+        row["quality_characteristic"],
+        row["quality_subcharacteristic"],
+    ))
+
+
+@lru_cache(maxsize=1)
+def _quality_aspect_mapping_reasons() -> dict[tuple[str, str], str]:
+    data_path = _data_dir() / "07_ADAS_Quality_Aspect_Mapping.json"
+    if not data_path.exists():
+        return {}
+
+    with data_path.open(encoding="utf-8") as f:
+        data = json.load(f)
+
+    reasons: dict[tuple[str, str], str] = {}
+    for mapping in data.get("mappings", []):
+        subchar_id = mapping.get("qualitySubcharacteristicId")
+        reason = mapping.get("mappingReason") or "Mapped by ADAS quality aspect model."
+        for aspect in mapping.get("qualityAspects", []):
+            normalized = _normalise_aspect_name(aspect)
+            if subchar_id and normalized:
+                reasons[(subchar_id, normalized)] = reason
+    return reasons
+
+
+def _scope_only_mapping_reason(aspect: str) -> str:
+    return (
+        f"Project-specific {aspect} mapping selected in the quality scope; "
+        "the common ADAS quality aspect mapping model does not yet define the technical rationale."
+    )
+
+
+def _data_dir() -> Path:
+    docker_data = Path("/data")
+    if docker_data.exists():
+        return docker_data
+    return Path(__file__).resolve().parents[3] / "data"
+
+
+def _normalise_aspect_name(aspect: str) -> str:
+    return "AI Safety" if aspect == "AISafety" else aspect
+
+
 async def _compute_lifecycle_process_maturity(
     session: AsyncSession,
     project_id: str,
@@ -528,10 +705,6 @@ async def _compute_lifecycle_process_maturity(
             evidence_coverage=evidence_coverage,
             blocking_risk_count=blocking_risk_count,
         )
-        draft_score = _lifecycle_draft_score(
-            evidence_coverage=evidence_coverage,
-            blocking_risk_count=blocking_risk_count,
-        )
         activities = [
             _activity_gate_summary(
                 activity=activity,
@@ -543,7 +716,6 @@ async def _compute_lifecycle_process_maturity(
             for activity in definition["activities"]
         ]
         blockers = [activity for activity in activities if activity["judgement"] == "Fail"]
-        pending = sum(1 for activity in activities if activity["official_maturity"] == 0)
 
         frameworks.append({
             "framework": definition["framework"],
@@ -551,11 +723,9 @@ async def _compute_lifecycle_process_maturity(
             "aspect": aspect,
             "gate": current_gate,
             "official_score": official_score,
-            "draft_score": draft_score,
             "official_coverage": official_coverage,
             "evidence_coverage": evidence_coverage,
             "maturity_band": _score_band(official_score),
-            "draft_band": _score_band(draft_score),
             "process_maturity_risk": _framework_process_risk(
                 official_score=official_score,
                 blocking_risk_count=blocking_risk_count,
@@ -569,11 +739,309 @@ async def _compute_lifecycle_process_maturity(
             ),
             "open_risk_count": len(framework_risks),
             "blocking_risk_count": blocking_risk_count,
-            "pending_human_confirmation_count": pending,
             "activities": activities,
         })
 
     return frameworks
+
+
+def _compute_team_activity_work_product_matrix(lifecycle_maturity: list[dict]) -> list[dict]:
+    rows = []
+    for framework in lifecycle_maturity:
+        for activity in framework.get("activities", []):
+            cells = [
+                _default_team_activity_cell(
+                    team=team["name"],
+                    aspect=framework["aspect"],
+                    activity_name=activity["activity_name"],
+                    maturity_state=activity["official_maturity"],
+                    judgement=activity["judgement"],
+                    required_work_product=activity["required_evidence"],
+                    blocking_risk_count=framework["blocking_risk_count"],
+                    main_weakness=activity["primary_reason"],
+                )
+                for team in _default_adas_team_columns()
+            ]
+            accountable_teams = [
+                cell["team"]
+                for cell in cells
+                if cell["role"] == "A"
+            ]
+            rows.append({
+                "framework": framework["framework"],
+                "aspect": framework["aspect"],
+                "lifecycle_phase": activity["lifecycle_phase"],
+                "activity_name": activity["activity_name"],
+                "check_detail": "Team responsibility and work product maturity for this lifecycle activity",
+                "gate": activity["gate"],
+                "expected_maturity": activity["expected_maturity"],
+                "required_work_product": activity["required_evidence"],
+                "responsible_role": ", ".join(accountable_teams),
+                "mapped_team": ", ".join(accountable_teams),
+                "team_assignment_status": "Mapped",
+                "maturity_state": activity["official_maturity"],
+                "judgement": activity["judgement"],
+                "blocking_level": activity["blocking_level"],
+                "blocking_risk_count": framework["blocking_risk_count"],
+                "main_weakness": activity["primary_reason"],
+                "source": "lifecycle_activity_team_model",
+                "cells": cells,
+            })
+    return rows
+
+
+def _default_adas_team_columns() -> list[dict]:
+    return [
+        {"name": "PdM/PgM/PjM AD/ADAS"},
+        {"name": "360 deg Perception AD/ADAS Safety"},
+        {"name": "Map (Vehicle) CA & AD/ADAS Non-Safety"},
+        {"name": "LaneLevelLocalization AD/ADAS Non-Safety"},
+        {"name": "MotionPlanner AD/ADAS Safety-Rule"},
+        {"name": "MotionPlanner AD/ADAS Safety-ML (SWC: DDTP)"},
+        {"name": "InterCommBev (Application Framework)"},
+        {"name": "Controller AD/ADAS Safety"},
+        {"name": "Product Integrity"},
+        {"name": "Product Delivery (Optional)"},
+    ]
+
+
+def _configured_team_matrix_cell(
+    team: str,
+    mapped_team: str | None,
+    result_status: str,
+    required_work_product: str | None,
+    findings: str | None,
+    evidence_ref: str | None,
+) -> dict:
+    if team != mapped_team:
+        return {
+            "team": team,
+            "role": "-",
+            "maturity_state": None,
+            "work_product_status": "Not applicable",
+            "evidence_status": "Not applicable",
+            "blocking_risk_count": 0,
+            "main_weakness": "",
+        }
+
+    maturity_state = _maturity_from_result(result_status)
+    return {
+        "team": team,
+        "role": "A",
+        "maturity_state": maturity_state,
+        "work_product_status": _work_product_status(maturity_state, result_status),
+        "evidence_status": _evidence_status(maturity_state),
+        "blocking_risk_count": 1 if result_status == "Fail" else 0,
+        "main_weakness": findings or "",
+        "required_work_product": required_work_product,
+        "evidence_ref": evidence_ref,
+    }
+
+
+def _default_team_activity_cell(
+    team: str,
+    aspect: str,
+    activity_name: str,
+    maturity_state: int,
+    judgement: str,
+    required_work_product: str,
+    blocking_risk_count: int,
+    main_weakness: str,
+) -> dict:
+    role = _default_team_role_for_activity(team, aspect, activity_name)
+    if role == "N/A":
+        return {
+            "team": team,
+            "role": "N/A",
+            "maturity_state": None,
+            "work_product_status": "Not applicable",
+            "evidence_status": "Not applicable",
+            "blocking_risk_count": 0,
+            "main_weakness": "",
+            "required_work_product": required_work_product,
+        }
+
+    return {
+        "team": team,
+        "role": role,
+        "maturity_state": maturity_state,
+        "work_product_status": _work_product_status(maturity_state, judgement),
+        "evidence_status": _evidence_status(maturity_state),
+        "blocking_risk_count": blocking_risk_count if role == "A" and judgement == "Fail" else 0,
+        "main_weakness": main_weakness if judgement == "Fail" and role in {"A", "R"} else "",
+        "required_work_product": required_work_product,
+    }
+
+
+def _default_team_role_for_activity(team: str, aspect: str, activity_name: str) -> str:
+    name = activity_name.lower()
+    is_pdm = team == "PdM/PgM/PjM AD/ADAS"
+    is_perception = team == "360 deg Perception AD/ADAS Safety"
+    is_map = team == "Map (Vehicle) CA & AD/ADAS Non-Safety"
+    is_localization = team == "LaneLevelLocalization AD/ADAS Non-Safety"
+    is_planner_rule = team == "MotionPlanner AD/ADAS Safety-Rule"
+    is_planner_ml = team == "MotionPlanner AD/ADAS Safety-ML (SWC: DDTP)"
+    is_intercomm = team == "InterCommBev (Application Framework)"
+    is_controller = team == "Controller AD/ADAS Safety"
+    is_integrity = team == "Product Integrity"
+    is_delivery = team == "Product Delivery (Optional)"
+    domain_teams = {
+        "360 deg Perception AD/ADAS Safety",
+        "Map (Vehicle) CA & AD/ADAS Non-Safety",
+        "LaneLevelLocalization AD/ADAS Non-Safety",
+        "MotionPlanner AD/ADAS Safety-Rule",
+        "MotionPlanner AD/ADAS Safety-ML (SWC: DDTP)",
+        "InterCommBev (Application Framework)",
+        "Controller AD/ADAS Safety",
+    }
+
+    if is_integrity:
+        return "R"
+
+    if aspect == "QM":
+        if is_pdm and any(key in name for key in ["planning", "tailoring", "defect", "release"]):
+            return "A"
+        if is_delivery and any(key in name for key in ["defect", "release"]):
+            return "C"
+        if is_intercomm and "architecture" in name:
+            return "A"
+        if team in domain_teams and any(key in name for key in ["requirements", "architecture", "verification"]):
+            return "A" if not is_intercomm or "architecture" not in name else "A"
+        if is_pdm or team in domain_teams:
+            return "C"
+        return "N/A"
+
+    if aspect == "FuSA":
+        if is_planner_rule and any(key in name for key in ["item", "hara", "safety goal", "functional", "allocation", "analysis"]):
+            return "A"
+        if is_controller and any(key in name for key in ["technical", "verification"]):
+            return "A"
+        if is_perception or is_planner_ml or is_localization:
+            return "C"
+        if is_pdm:
+            return "C"
+        return "N/A"
+
+    if aspect == "CS":
+        if is_intercomm and any(key in name for key in ["vulnerability", "verification", "incident"]):
+            return "A"
+        if is_map and any(key in name for key in ["item", "tara", "goals", "concept", "requirements"]):
+            return "A"
+        if is_controller or is_planner_rule or is_planner_ml or is_perception or is_localization:
+            return "C"
+        if is_pdm or is_delivery:
+            return "C" if "incident" in name else "N/A"
+        return "N/A"
+
+    if aspect == "SOTIF":
+        if is_planner_rule and any(key in name for key in ["functionality", "hazard", "scenario", "mitigation", "exploration", "verification"]):
+            return "A"
+        if is_map and any(key in name for key in ["triggering", "scenario"]):
+            return "A"
+        if is_delivery and "field monitoring" in name:
+            return "C"
+        if is_perception or is_localization or is_controller or is_planner_ml:
+            return "C"
+        if is_pdm:
+            return "C"
+        return "N/A"
+
+    if aspect == "AI Safety":
+        if is_planner_ml and any(key in name for key in ["ai system", "ai risk", "training", "model", "robustness", "runtime", "human-machine", "change"]):
+            return "A"
+        if is_localization and any(key in name for key in ["data lifecycle", "data collection", "annotation", "dataset"]):
+            return "A"
+        if is_delivery and any(key in name for key in ["change", "post-deployment"]):
+            return "C"
+        if is_perception or is_map or is_controller or is_planner_rule:
+            return "C"
+        if is_pdm:
+            return "C"
+        return "N/A"
+
+    return "N/A"
+
+
+def _maturity_from_result(result_status: str) -> int:
+    if result_status == "Pass":
+        return 4
+    if result_status == "Conditional":
+        return 3
+    if result_status == "Fail":
+        return 2
+    if result_status == "Open":
+        return 1
+    return 0
+
+
+def _work_product_status(maturity_state: int, judgement: str) -> str:
+    if maturity_state >= 4 and judgement == "Pass":
+        return "Accepted"
+    if maturity_state >= 3:
+        return "Evidence available"
+    if maturity_state >= 2:
+        return "In progress"
+    if maturity_state >= 1:
+        return "Planned"
+    return "Not assessed"
+
+
+def _evidence_status(maturity_state: int) -> str:
+    if maturity_state >= 3:
+        return "Available"
+    if maturity_state >= 2:
+        return "Partial"
+    return "Missing"
+
+
+def _map_responsible_role_to_team(responsible_role: str | None) -> str | None:
+    if not responsible_role:
+        return None
+    role = responsible_role.lower()
+    for team in _default_adas_team_columns():
+        name = team["name"]
+        normalized = name.lower()
+        if normalized in role or role in normalized:
+            return name
+    return None
+
+
+def _gate_definition_activity_label(definition: AssessmentGateDefinition) -> str:
+    subcharacteristic = definition.subcharacteristic or "Unspecified sub-characteristic"
+    phase = definition.lifecycle_phase or "Unspecified phase"
+    return f"{subcharacteristic} / {phase}"
+
+
+def _framework_from_gate_definition(definition: AssessmentGateDefinition) -> str:
+    aspect = _aspect_from_gate_definition(definition)
+    return {
+        "FuSA": "FuSA Lifecycle / ISO 26262",
+        "CS": "CS Lifecycle / ISO/SAE 21434",
+        "SOTIF": "SOTIF Lifecycle / ISO 21448",
+        "AI Safety": "AI Safety Lifecycle / ISO/PAS 8800",
+        "QM": "QM Lifecycle",
+    }.get(aspect, "Assessment Gate Definition")
+
+
+def _aspect_from_gate_definition(definition: AssessmentGateDefinition) -> str:
+    text = " ".join([
+        definition.lifecycle_phase or "",
+        definition.characteristic or "",
+        definition.subcharacteristic or "",
+        definition.what_to_check or "",
+        definition.pass_criteria or "",
+        definition.required_evidence or "",
+        definition.responsible_role or "",
+    ]).lower()
+    if any(key in text for key in ["sotif", "iso 21448", "triggering condition", "intended functionality"]):
+        return "SOTIF"
+    if any(key in text for key in ["iso/pas 8800", "iso 8800", "ai safety", "dataset", "model", "data lifecycle"]):
+        return "AI Safety"
+    if any(key in text for key in ["tara", "cyber", "iso/sae 21434", "iso 21434"]):
+        return "CS"
+    if any(key in text for key in ["fusa", "iso 26262", "hara", "asil", "safety goal", "functional safety"]):
+        return "FuSA"
+    return "QM"
 
 
 def _infer_current_gate(phase: str) -> str:
@@ -624,11 +1092,34 @@ def _lifecycle_official_score(
     return score
 
 
-def _lifecycle_draft_score(evidence_coverage: int, blocking_risk_count: int) -> int:
-    score = evidence_coverage
-    if blocking_risk_count > 0:
+def _attribute_aspect_score(
+    activity_maturity: int | None,
+    evidence_coverage: int,
+    blocking_gap_count: int,
+) -> int:
+    if activity_maturity is None:
+        return 0
+    score = round((activity_maturity * 0.7) + (evidence_coverage * 0.3))
+    if blocking_gap_count > 0:
         score = min(score, 50)
     return score
+
+
+def _attribute_aspect_reason(
+    score: int,
+    evidence_coverage: int,
+    blocking_gap_count: int,
+    activity_maturity: int | None,
+) -> str:
+    if activity_maturity is None:
+        return "No Activity x Gate maturity mapped to this quality sub-characteristic"
+    if blocking_gap_count > 0:
+        return "Open High/Critical risk blocks sub-characteristic maturity"
+    if evidence_coverage < 70:
+        return "Evidence coverage below sub-characteristic threshold"
+    if score < 70:
+        return "Activity maturity below sub-characteristic ready threshold"
+    return "Quality sub-characteristic is in ready range"
 
 
 def _activity_gate_summary(
@@ -641,7 +1132,7 @@ def _activity_gate_summary(
     if official_coverage == 0:
         official_maturity = 0
         judgement = "Not Assessed"
-        reason = "No human-confirmed Activity x Gate result"
+        reason = "No formal Activity x Gate result"
     elif blocking_risk_count > 0 and activity["blocking_level"] == "P0":
         official_maturity = min(2, _state_from_score(evidence_coverage))
         judgement = "Fail"
@@ -649,9 +1140,7 @@ def _activity_gate_summary(
     else:
         official_maturity = _state_from_score(min(official_coverage, evidence_coverage))
         judgement = "Pass" if official_maturity >= 3 else "Fail"
-        reason = "Human-reviewed result available"
-
-    draft_maturity = _state_from_score(_lifecycle_draft_score(evidence_coverage, blocking_risk_count))
+        reason = "Formal Activity x Gate result available"
 
     return {
         "lifecycle_phase": activity["phase"],
@@ -661,7 +1150,6 @@ def _activity_gate_summary(
         "blocking_level": activity["blocking_level"],
         "required_evidence": activity["evidence"],
         "official_maturity": official_maturity,
-        "draft_maturity": draft_maturity,
         "judgement": judgement,
         "primary_reason": reason,
     }
@@ -718,7 +1206,7 @@ def _framework_main_blocker(
     if blocking_risk_count > 0:
         return "Open High/Critical risk"
     if official_coverage == 0:
-        return "No human-confirmed Activity x Gate result"
+        return "No formal Activity x Gate result"
     if evidence_coverage < 70:
         return "Evidence coverage below lifecycle threshold"
     return "No major lifecycle blocker"
@@ -731,11 +1219,13 @@ def _lifecycle_activity_library() -> list[dict]:
             "standard_context": "QM",
             "aspect": "QM",
             "activities": [
-                _activity("Concept", "Project scope and quality plan", "Quality plan, scope definition", "P0"),
-                _activity("Development", "Requirements baseline", "Requirement review record", "P0"),
-                _activity("Development", "Architecture baseline", "Architecture review record", "P0"),
-                _activity("Validation", "Integration and qualification test", "Test report, issue list", "P1"),
-                _activity("Release", "Release readiness", "Release review record", "P0"),
+                _activity("Planning", "Project quality planning", "Quality plan, scope definition, role and responsibility matrix", "P0"),
+                _activity("Planning", "Quality sub-characteristic tailoring", "Quality sub-characteristic tailoring record and assessment scope decision", "P0"),
+                _activity("Development", "Requirements completeness review", "Requirements coverage report and review record", "P0"),
+                _activity("Development", "Architecture consistency review", "Architecture review record and interface consistency evidence", "P0"),
+                _activity("Validation", "Verification strategy and coverage planning", "Verification strategy, validation plan, and coverage matrix", "P0"),
+                _activity("Operation", "Defect and issue management", "Defect register, issue triage record, and closure evidence", "P1"),
+                _activity("Release", "Release quality readiness", "Release readiness report and open risk review", "P0"),
             ],
         },
         {
@@ -743,13 +1233,15 @@ def _lifecycle_activity_library() -> list[dict]:
             "standard_context": "ISO 26262",
             "aspect": "FuSA",
             "activities": [
-                _activity("Concept", "Safety management planning", "Safety plan, confirmation measure plan", "P0"),
                 _activity("Concept", "Item definition", "Item definition document", "P0"),
                 _activity("Concept", "HARA", "HARA report, safety goal list, ASIL rationale", "P0"),
+                _activity("Concept", "Safety goal definition", "Safety goal list and ASIL rationale", "P0"),
                 _activity("Development", "Functional safety concept", "FSC document", "P0"),
                 _activity("Development", "Technical safety concept", "TSC document", "P0"),
-                _activity("Validation", "Verification and validation", "Safety verification and validation report", "P0"),
-                _activity("Release", "Safety case", "Safety argument and evidence package", "P0"),
+                _activity("Development", "Safety requirements allocation", "Allocated safety requirements and traceability matrix", "P0"),
+                _activity("Development", "Safety analysis", "Safety analysis report and residual risk rationale", "P0"),
+                _activity("Validation", "Safety verification and validation", "Safety verification and validation report", "P0"),
+                _activity("Release", "Safety case / safety argument", "Safety case and evidence package", "P0"),
             ],
         },
         {
@@ -757,12 +1249,14 @@ def _lifecycle_activity_library() -> list[dict]:
             "standard_context": "ISO/SAE 21434",
             "aspect": "CS",
             "activities": [
-                _activity("Concept", "Cybersecurity management planning", "CS plan, role assignment", "P0"),
                 _activity("Concept", "Cybersecurity item definition", "CS item definition", "P0"),
                 _activity("Concept", "TARA", "TARA report, treatment rationale", "P0"),
+                _activity("Concept", "Cybersecurity goals", "Cybersecurity goal list and risk treatment rationale", "P0"),
+                _activity("Development", "Cybersecurity concept", "Cybersecurity concept and control allocation", "P0"),
                 _activity("Development", "Cybersecurity requirements", "CS requirement baseline", "P0"),
+                _activity("Development", "Vulnerability analysis", "Vulnerability analysis report and mitigation tracking", "P0"),
                 _activity("Validation", "Cybersecurity verification and validation", "Pen test and vulnerability test report", "P0"),
-                _activity("Operation", "Operations and monitoring", "Monitoring and vulnerability management records", "P1"),
+                _activity("Operation", "Incident and vulnerability response planning", "Incident response plan and vulnerability management records", "P1"),
             ],
         },
         {
@@ -771,11 +1265,13 @@ def _lifecycle_activity_library() -> list[dict]:
             "aspect": "SOTIF",
             "activities": [
                 _activity("Concept", "Intended functionality definition", "Intended function and ODD description", "P0"),
-                _activity("Concept", "SOTIF hazard identification", "Hazard and triggering condition analysis", "P0"),
-                _activity("Development", "Scenario identification and coverage", "Scenario catalogue and coverage rationale", "P0"),
+                _activity("Concept", "Hazard identification for intended functionality", "SOTIF hazard analysis for intended functionality", "P0"),
+                _activity("Concept", "Triggering condition identification", "Triggering condition catalogue and rationale", "P0"),
+                _activity("Development", "Scenario analysis", "Scenario catalogue and coverage rationale", "P0"),
                 _activity("Development", "Known unsafe scenario mitigation", "Mitigation strategy and verification evidence", "P0"),
-                _activity("Validation", "Validation of SOTIF measures", "Validation report and residual risk evaluation", "P0"),
-                _activity("Operation", "Field monitoring and update feedback", "Monitoring plan and field feedback evidence", "P1"),
+                _activity("Development", "Unknown unsafe scenario exploration", "Unknown unsafe scenario exploration evidence", "P0"),
+                _activity("Validation", "SOTIF verification and validation", "Validation report and residual risk evaluation", "P0"),
+                _activity("Operation", "Field monitoring and feedback", "Monitoring plan and field feedback evidence", "P1"),
             ],
         },
         {
@@ -783,13 +1279,18 @@ def _lifecycle_activity_library() -> list[dict]:
             "standard_context": "ISO/PAS 8800",
             "aspect": "AI Safety",
             "activities": [
-                _activity("Planning", "AI safety lifecycle planning", "AI safety plan and responsibility matrix", "P0"),
-                _activity("Data", "Data lifecycle and data quality", "Dataset lineage, quality, coverage, and governance records", "P0"),
-                _activity("Development", "Model development controls", "Model training and development evidence", "P0"),
-                _activity("Evaluation", "Model evaluation and validation", "Model evaluation, robustness, and scenario validation report", "P0"),
-                _activity("Assurance", "AI safety argument", "AI safety argument package", "P0"),
-                _activity("Assurance", "Evaluation of safety argument", "Safety argument evaluation record", "P0"),
-                _activity("Operation", "Operation and monitoring", "Runtime monitoring and assurance maintenance records", "P1"),
+                _activity("Planning", "AI system definition", "AI system definition and intended use description", "P0"),
+                _activity("Planning", "AI risk analysis", "AI risk analysis and risk treatment rationale", "P0"),
+                _activity("Data", "Data lifecycle planning", "Data lifecycle plan and governance model", "P0"),
+                _activity("Data", "Data collection and sourcing", "Data source inventory, lineage, and collection evidence", "P0"),
+                _activity("Data", "Data annotation and labelling", "Annotation guideline, labelling quality report, and review record", "P0"),
+                _activity("Data", "Dataset quality and representativeness assessment", "Dataset quality, bias, representativeness, and coverage assessment", "P0"),
+                _activity("Development", "Training and model development", "Training record, model development evidence, and configuration baseline", "P0"),
+                _activity("Evaluation", "Model verification and validation", "Model verification, validation, and scenario evaluation report", "P0"),
+                _activity("Evaluation", "Robustness and edge case evaluation", "Robustness, edge case, and stress evaluation report", "P0"),
+                _activity("Operation", "Runtime monitoring", "Runtime monitoring plan and operational safety evidence", "P1"),
+                _activity("HMI", "Human-machine interaction safety", "HMI safety analysis and user interaction risk evidence", "P0"),
+                _activity("Operation", "Change management and post-deployment monitoring", "Change impact analysis and post-deployment monitoring evidence", "P1"),
             ],
         },
     ]
@@ -844,11 +1345,11 @@ def _quality_gate_reason(
     if blocking_gap_count > 0:
         return "Open High/Critical risk blocks this gate"
     if official_coverage == 0:
-        return "No human-reviewed scope result for this aspect"
+        return "No formal scope assessment result for this aspect"
     if evidence_coverage < 70:
         return "Evidence coverage below gate threshold"
     if official_coverage < 80:
-        return "Human-reviewed scope coverage below threshold"
+        return "Formal scope assessment coverage below threshold"
     if maturity < 80:
         return "Gate maturity is conditional"
     return "Gate maturity is ready"

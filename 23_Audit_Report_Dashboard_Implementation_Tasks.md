@@ -1,4 +1,4 @@
-# 23 Audit Report Dashboard Implementation Tasks
+# 23 Assessment Dashboard Implementation Tasks
 
 ## 1. Purpose
 
@@ -15,7 +15,7 @@ Design source:
 Scope boundary:
 
 ```text
-Audit Report Dashboard = risk display and attention mechanism
+Assessment Dashboard = risk display and attention mechanism
 Not in scope = approval workflow, management final decision, decision record persistence
 ```
 
@@ -23,7 +23,7 @@ Not in scope = approval workflow, management final decision, decision record per
 
 ## 2. Proposed Vertical Slices
 
-### Slice 1 - Audit Report Dashboard Route and Snapshot Shell
+### Slice 1 - Assessment Dashboard Route and Snapshot Shell
 
 Type: AFK
 
@@ -31,29 +31,30 @@ Blocked by: None
 
 User stories covered:
 
-- Management can open a project-level Audit Report Dashboard.
-- Project detail can navigate to the Audit Report Dashboard.
+- Management can open a project-level Assessment Dashboard.
+- Project detail can navigate to the Assessment Dashboard.
 - The system clearly separates dashboard risk display from approval workflow.
 
 What to build:
 
-Create the first end-to-end Audit Report Dashboard path:
+Create the first end-to-end Assessment Dashboard path:
 
 ```text
 Project Detail
--> Open Audit Report Dashboard
--> GET /api/v1/projects/{id}/audit-report/dashboard
--> AuditReportView renders Audit Snapshot shell
+-> Open Assessment Dashboard
+-> GET /api/v1/projects/{id}/assessment-dashboard
+-> AuditReportView renders Assessment Snapshot shell
 ```
 
 The first implementation may return empty arrays for `quality_gate_maturity`, `project_risk_posture`, and `lifecycle_process_maturity`, but it must return a real project identity, snapshot time, current gate, and placeholder-safe executive risk signals.
 
 Acceptance criteria:
 
-- [ ] `GET /api/v1/projects/{id}/audit-report/dashboard` exists.
+- [ ] `GET /api/v1/projects/{id}/assessment-dashboard` exists.
+- [ ] `GET /api/v1/projects/{id}/audit-report/dashboard` may remain as a backward-compatible alias, but it is not the preferred public path.
 - [ ] The response contains `project_id`, `snapshot_at`, `current_gate`, and `audit_snapshot`.
-- [ ] Frontend has an Audit Report Dashboard view reachable from Project Detail.
-- [ ] The view renders the four fixed sections: Audit Snapshot, Quality Gate Maturity, Project Risk Posture, Lifecycle & Process Maturity.
+- [ ] Frontend has an Assessment Dashboard view reachable from Project Detail.
+- [ ] The view renders the six fixed sections: Assessment Snapshot, Quality Gate Maturity, Project Risk Posture, Quality Sub-Characteristic Maturity, Lifecycle Activity Maturity, Team Activity & Work Product Matrix.
 - [ ] The dashboard UI does not show or store approval decisions, management final decisions, or decision records.
 
 ---
@@ -85,7 +86,7 @@ At this stage, `Process Maturity Risk` may be `Unknown` until Activity x Gate da
 
 Acceptance criteria:
 
-- [ ] Audit Snapshot returns all five executive risk signals.
+- [ ] Assessment Snapshot returns all five executive risk signals.
 - [ ] `Recommended Attention Level` uses Normal, Watch, At Risk, Critical, or Escalation Needed.
 - [ ] `Product Risk` uses Low, Medium, High, Critical, or Unknown.
 - [ ] `Process Maturity Risk` uses Low, Medium, High, Critical, or Unknown.
@@ -114,7 +115,7 @@ Compute and display Risk Confidence reason breakdown:
 ```text
 Evidence coverage
 Trace coverage
-Official assessment coverage
+Assessment coverage
 Review freshness
 Critical unknown item count
 Primary reason
@@ -125,7 +126,7 @@ Baseline thresholds:
 ```text
 Evidence coverage >= 70%
 Trace coverage >= 70%
-Official assessment coverage >= 80%
+Assessment coverage >= 80%
 ```
 
 Acceptance criteria:
@@ -203,11 +204,9 @@ The result stores:
 maturity_state
 judgement
 source
-ai_maturity_state
-ai_judgement
-ai_confidence
-human_confirmed_maturity_state
-human_confirmed_judgement
+assessment_result_status
+assessment_result_owner
+assessment_result_date
 evidence_ids
 risk_ids
 trace_node_ids
@@ -217,7 +216,7 @@ Acceptance criteria:
 
 - [ ] Activity x Gate definition data can be listed by project and gate.
 - [ ] Activity Gate Results can be created or updated manually.
-- [ ] AI-proposed result fields can be stored separately from human-confirmed result fields.
+- [ ] Activity Gate Results store one formal result used by the report.
 - [ ] Maturity state uses N/A, 0, 1, 2, 3, 4.
 - [ ] Judgement uses Pass, Fail, Waived, Not Assessed, Not Applicable.
 - [ ] Evidence cap rules prevent maturity_state from exceeding the allowed maximum.
@@ -225,7 +224,7 @@ Acceptance criteria:
 
 ---
 
-### Slice 6 - Official and Draft Maturity Score Calculation
+### Slice 6 - Integrated Maturity Score Calculation
 
 Type: AFK
 
@@ -233,33 +232,29 @@ Blocked by: Slice 5
 
 User stories covered:
 
-- Management can distinguish official maturity from AI-assisted draft maturity.
-- Unconfirmed applicable items reduce official score and coverage.
+- Management can see one formal integrated maturity score and understand how missing formal assessment results reduce score and coverage.
+- Applicable items without a formal assessment result reduce integrated score and assessment coverage.
 
 What to build:
 
 Compute:
 
 ```text
-Official score
-Draft score
-Assessment coverage
-Pending human confirmation count
-Framework scores
 Integrated score
+Assessment coverage
+Lifecycle activity scores
 P0 caps
 ```
 
-Official score uses human-confirmed results only. Draft score uses human-confirmed results plus confidence-weighted AI-proposed results.
+The report exposes one formal integrated score. Applicable items without a formal assessment result count as 0 and are reflected in assessment coverage.
 
 Acceptance criteria:
 
-- [ ] Applicable but unconfirmed items count as 0 in Official score.
-- [ ] Official coverage is returned separately from Official score.
-- [ ] Draft score applies AI confidence weighting: >=0.80 full, 0.60-0.79 half, <0.60 zero.
-- [ ] P0 caps apply to framework scores.
-- [ ] Report response returns official and draft integrated scores.
-- [ ] Tests cover unconfirmed items, AI confidence weighting, and P0 cap behavior.
+- [ ] Applicable items without a formal assessment result count as 0 in the integrated score.
+- [ ] Assessment coverage is returned separately from the integrated score.
+- [ ] P0 caps apply to lifecycle activity scores.
+- [ ] Report response returns one integrated score.
+- [ ] Tests cover missing formal result items and P0 cap behavior.
 
 ---
 
@@ -307,7 +302,7 @@ User stories covered:
 
 What to build:
 
-Render Lifecycle & Process Maturity:
+Render Lifecycle Activity Maturity:
 
 ```text
 Framework -> Lifecycle Phase -> Activity -> Gate progression
@@ -325,7 +320,95 @@ Acceptance criteria:
 
 ---
 
-### Slice 9 - Project Risk Posture View and Current Gate Impact
+### Slice 9 - Quality Sub-Characteristic Maturity View
+
+Type: AFK
+
+Blocked by: Slice 5, Slice 6, Slice 7
+
+User stories covered:
+
+- Quality engineers can understand whether an ISO 25010 sub-characteristic is actually realised across QM, FuSA, CS, SOTIF, and AI Safety.
+- Management can see which quality sub-characteristics are weak and which quality aspect causes the weakness.
+
+What to build:
+
+Render Quality Sub-Characteristic Maturity:
+
+```text
+Quality Sub-Characteristic
+-> Quality Aspect
+-> Activity x Gate
+```
+
+The table should group rows by Characteristic first, then show related Sub-Characteristics together.
+
+Acceptance criteria:
+
+- [ ] API returns `quality_subcharacteristic_maturity` grouped by quality characteristic and sub-characteristic.
+- [ ] Frontend renders Characteristic group rows with Sub-Characteristic detail rows below.
+- [ ] Each sub-characteristic row shows overall maturity, aspect realisation, mapped aspects with mapping rationale, weakest aspect, evidence coverage, blockers, and main weakness.
+- [ ] Mapping rationale comes from the ADAS quality aspect mapping, for example `mappingReason` in `07_ADAS_Quality_Aspect_Mapping.json`.
+- [ ] A project scope selection is not shown as the technical rationale; if rationale is missing, the UI exposes the missing common mapping definition.
+- [ ] Scores are shown as percentages with `%`.
+- [ ] Low maturity rows can drill down to Activity x Gate, evidence, risk, and trace context when available.
+
+---
+
+### Slice 10 - Team Activity & Work Product Matrix
+
+Type: AFK
+
+Blocked by: Slice 5, Slice 8
+
+User stories covered:
+
+- Management can see which teams own or contribute to each required activity.
+- Project managers can identify missing accountable teams, missing work products, and team-level blockers.
+- Assessors can explain Risk Confidence gaps using concrete team/activity/work product facts.
+
+What to build:
+
+Render Team Activity & Work Product Matrix:
+
+```text
+Rows = QM / FuSA / CS / SOTIF / AI Safety activities
+Columns = configurable ADAS teams
+Cells = role + maturity + work product status + evidence status + blocking risks
+```
+
+Default team columns:
+
+```text
+PdM/PgM/PjM AD/ADAS
+360 deg Perception AD/ADAS Safety
+Map (Vehicle) CA & AD/ADAS Non-Safety
+LaneLevelLocalization AD/ADAS Non-Safety
+MotionPlanner AD/ADAS Safety-Rule
+MotionPlanner AD/ADAS Safety-ML (SWC: DDTP)
+InterCommBev (Application Framework)
+Controller AD/ADAS Safety
+Product Integrity
+Product Delivery (Optional)
+```
+
+Acceptance criteria:
+
+- [ ] API returns team matrix rows grouped by framework and approved lifecycle activity; rows must not use long gate checklist question text as the primary activity label.
+- [ ] Team columns are project-configurable and can be tailored per project.
+- [ ] The primary table is visually organised as `Framework / Activity -> Team columns -> Assessment Detail`; team columns must appear immediately after the activity column.
+- [ ] Each activity row can show Accountable, Contributing, Reviewer / Approver, and Not applicable cells using `A / C / R / N/A`.
+- [ ] Cells are not left blank; non-applicable responsibility is shown as `N/A`.
+- [ ] Each cell can show maturity, work product status, evidence status, blocking risk count, and main weakness.
+- [ ] Activities without an Accountable team are exposed as assessment coverage gaps or critical unknowns.
+- [ ] Missing work products are exposed as evidence coverage gaps.
+- [ ] Product Integrity can review or approve, but does not replace the accountable activity owner.
+- [ ] Multi-team participation does not duplicate or inflate the overall maturity score.
+- [ ] The matrix uses a configured activity-team responsibility model. A default ADAS responsibility model may be seeded, but project teams can tailor, override, or extend it.
+
+---
+
+### Slice 11 - Project Risk Posture View and Current Gate Impact
 
 Type: AFK
 
@@ -359,11 +442,11 @@ Acceptance criteria:
 
 ---
 
-### Slice 10 - Traceability Drill-Down from Report Items
+### Slice 12 - Traceability Drill-Down from Report Items
 
 Type: AFK
 
-Blocked by: Slice 5, Slice 7, Slice 8, Slice 9
+Blocked by: Slice 5, Slice 7, Slice 8, Slice 9, Slice 10, Slice 11
 
 User stories covered:
 
@@ -394,11 +477,11 @@ Acceptance criteria:
 
 ---
 
-### Slice 11 - Demo Data and Regression Coverage
+### Slice 13 - Demo Data and Regression Coverage
 
 Type: AFK
 
-Blocked by: Slice 2, Slice 6, Slice 7, Slice 8, Slice 9
+Blocked by: Slice 2, Slice 6, Slice 7, Slice 8, Slice 9, Slice 10, Slice 11
 
 User stories covered:
 
@@ -426,7 +509,7 @@ Acceptance criteria:
 - [ ] Demo data includes at least one P0 blocker case.
 - [ ] Demo data includes separate SOTIF and AI Safety lifecycle maturity examples.
 - [ ] Automated tests cover dashboard signal calculation.
-- [ ] Frontend smoke test verifies Audit Report Dashboard renders without blank sections.
+- [ ] Frontend smoke test verifies Assessment Dashboard renders without blank sections.
 
 ---
 
@@ -435,17 +518,19 @@ Acceptance criteria:
 Recommended implementation order:
 
 ```text
-1. Slice 1 - Audit Report Dashboard Route and Snapshot Shell
+1. Slice 1 - Assessment Dashboard Route and Snapshot Shell
 2. Slice 2 - Executive Risk Signals from Existing Project Data
 3. Slice 3 - Risk Confidence Metrics and Reason Breakdown
 4. Slice 4 - Lifecycle Activity Library and Project Applicability Tailoring
 5. Slice 5 - Activity x Gate Definitions and Results
-6. Slice 6 - Official and Draft Maturity Score Calculation
-7. Slice 9 - Project Risk Posture View and Current Gate Impact
-8. Slice 7 - Quality Gate Maturity View
-9. Slice 8 - Lifecycle and Process Maturity View
-10. Slice 10 - Traceability Drill-Down from Report Items
-11. Slice 11 - Demo Data and Regression Coverage
+6. Slice 6 - Integrated Maturity Score Calculation
+7. Slice 7 - Quality Gate Maturity View
+8. Slice 8 - Lifecycle and Process Maturity View
+9. Slice 9 - Quality Sub-Characteristic Maturity View
+10. Slice 10 - Team Activity & Work Product Matrix
+11. Slice 11 - Project Risk Posture View and Current Gate Impact
+12. Slice 12 - Traceability Drill-Down from Report Items
+13. Slice 13 - Demo Data and Regression Coverage
 ```
 
 Slice 4 is the only HITL slice in this draft because the lifecycle activity library needs domain approval. All other slices are intended to be AFK once Slice 4 is approved.

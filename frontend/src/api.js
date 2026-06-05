@@ -27,7 +27,15 @@ export const api = {
   exportProject: (id) => request('GET', `/projects/${id}/export`),
   importProject: (data) => request('POST', '/projects/import', data),
   getDashboard: (id) => request('GET', `/projects/${id}/dashboard`),
-  getAuditReportDashboard: (id, params) => request('GET', `/projects/${id}/audit-report/dashboard${params ? '?' + new URLSearchParams(params) : ''}`),
+  getAssessmentDashboard: async (id, params) => {
+    const query = params ? `?${new URLSearchParams(params)}` : ''
+    try {
+      return await request('GET', `/projects/${id}/assessment-dashboard${query}`)
+    } catch (err) {
+      if (err.status !== 404) throw err
+      return request('GET', `/projects/${id}/audit-report/dashboard${query}`)
+    }
+  },
 
   // Scope
   getScope: (pid) => request('GET', `/projects/${pid}/scope`),

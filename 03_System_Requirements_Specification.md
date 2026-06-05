@@ -540,7 +540,7 @@ The project dashboard shall show assessment readiness.
 
 ### SYSREQ PDB 008
 
-The project dashboard shall show executive risk signals derived from the Audit Report Dashboard model:
+The project dashboard shall show executive risk signals derived from the Assessment Dashboard model:
 
 - Recommended Attention Level
 - Product Risk
@@ -572,7 +572,7 @@ The project dashboard shall support navigation to Project Sankey Trace View.
 
 ### SYSREQ PDB 013
 
-The project dashboard shall support navigation to the Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+The project dashboard shall support navigation to the Assessment Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 
 ### SYSREQ PDB 014
 
@@ -743,19 +743,23 @@ The system shall provide `GET /api/v1/health` returning `{"status": "ok"}` for c
 
 The system shall provide `POST /api/v1/admin/seed-demo` to populate sample ADAS projects for demonstration purposes. This endpoint shall be idempotent.
 
-## 12b. Audit Report and Lifecycle Maturity Requirements
+## 12b. Assessment Dashboard and Lifecycle Maturity Requirements
 
 ### SYSREQ AUDIT 001
 
-The system shall support generating a project-level Audit Report snapshot at a specific point in time.
+The system shall support generating a project-level Assessment Dashboard snapshot at a specific point in time.
 
 ### SYSREQ AUDIT 002
 
-The Audit Report shall include four sections: Audit Snapshot, Quality Gate Maturity, Project Risk Posture, and Lifecycle & Process Maturity.
+The Assessment Dashboard shall include six sections: Assessment Snapshot, Quality Gate Maturity, Project Risk Posture, Quality Sub-Characteristic Maturity, Lifecycle Activity Maturity, and Team Activity & Work Product Matrix.
 
 ### SYSREQ AUDIT 003
 
 Quality Gate Maturity shall show QG0-QG5 maturity across the five Quality Aspects: QM, FuSA, CS, SOTIF, and AI Safety.
+
+### SYSREQ AUDIT 003A
+
+Quality Sub-Characteristic Maturity shall group formal Activity x Gate results by Quality Characteristic, Quality Sub-Characteristic, and Quality Aspect. It shall show related Quality Aspects, technical mapping rationale, aspect-level realisation, weakest aspect, and main weakness.
 
 ### SYSREQ AUDIT 004
 
@@ -763,7 +767,11 @@ Project Risk Posture shall summarise all current open project risks and separate
 
 ### SYSREQ AUDIT 005
 
-Lifecycle & Process Maturity shall cover five separate lifecycle frameworks: QM Lifecycle, FuSA / ISO 26262, CS / ISO SAE 21434, SOTIF / ISO 21448, and AI Safety / ISO PAS 8800.
+Lifecycle Activity Maturity shall cover five separate lifecycle frameworks: QM Lifecycle, FuSA / ISO 26262, CS / ISO SAE 21434, SOTIF / ISO 21448, and AI Safety / ISO PAS 8800.
+
+### SYSREQ AUDIT 005A
+
+Team Activity & Work Product Matrix shall show configurable ADAS team columns and lifecycle activity rows. Each cell shall show role, maturity, work product status, evidence status, and blocking risk context where applicable.
 
 ### SYSREQ AUDIT 006
 
@@ -779,11 +787,11 @@ Each Activity x Gate result shall store both a maturity state and a gate judgeme
 
 ### SYSREQ AUDIT 009
 
-The maturity state shall describe activity, evidence, or deliverable maturity and shall not be used to represent whether an AI-generated assessment result has been human-confirmed.
+The maturity state shall describe activity, evidence, or deliverable maturity and shall not be used to represent a separate report-preparation state.
 
 ### SYSREQ AUDIT 010
 
-Official maturity score shall use human-confirmed assessment results only. AI-proposed results without human confirmation shall contribute only to draft maturity score.
+The Assessment Dashboard shall show one formal maturity score based on formal assessment results. It shall not expose a separate draft score or confirmation workflow.
 
 ### SYSREQ AUDIT 011
 
@@ -791,7 +799,7 @@ Low maturity and failed Activity x Gate results shall be traceable to Evidence I
 
 ### SYSREQ AUDIT 012
 
-Audit Snapshot shall show executive dashboard risk signals:
+Assessment Snapshot shall show executive dashboard risk signals:
 
 - Recommended Attention Level
 - Product Risk
@@ -809,7 +817,7 @@ Gate Readiness shall include Gate Progression Signal with values Ready, Conditio
 
 ### SYSREQ AUDIT 015
 
-Risk Confidence shall use Evidence coverage, Trace coverage, Official assessment coverage, review freshness, and unknown or unassessed critical item ratio.
+Risk Confidence shall use Evidence coverage, Trace coverage, Assessment coverage, review freshness, and unknown or unassessed critical item ratio.
 
 ### SYSREQ AUDIT 016
 
@@ -817,7 +825,7 @@ Risk Confidence shall show reason breakdown when its value is Low or Unknown.
 
 ### SYSREQ AUDIT 017
 
-The Audit Report Dashboard shall not store approval decisions, management final decisions, or decision records.
+The Assessment Dashboard shall not store approval decisions, management final decisions, or decision records.
 
 Full design is defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 

@@ -156,7 +156,7 @@ Project Header
 → Open Risk and Evidence Summary
 ```
 
-Project detail shall also provide access to the full Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+Project detail shall also provide access to the full Assessment Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 
 Executive Risk Signals shall be shown in the project detail dashboard:
 
@@ -212,5 +212,5 @@ Project card
 6. Project detail opens after clicking a project card.
 7. Project detail shows dashboard before trace view.
 8. Project Sankey only shows tailored scope by default.
-9. Project detail dashboard shows executive risk signals derived from the Audit Report Dashboard model.
-10. Project detail can open the full Audit Report Dashboard.
+9. Project detail dashboard shows executive risk signals derived from the Assessment Dashboard model.
+10. Project detail can open the full Assessment Dashboard.

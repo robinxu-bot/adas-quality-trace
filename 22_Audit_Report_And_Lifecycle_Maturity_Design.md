@@ -1,14 +1,14 @@
-# 22 Audit Report and Lifecycle Maturity Design
+# 22 Assessment Dashboard and Lifecycle Maturity Design
 
 ## 1. Purpose
 
-This document defines the PQRETS audit report model and the lifecycle maturity model used to generate report views.
+This document defines the PQRETS Assessment Dashboard model and the lifecycle maturity model used to generate assessment views.
 
-The report is not a single gate run record. It is a project-level audit snapshot at a specific point in time.
+The dashboard is not a single gate run record. It is a project-level assessment snapshot at a specific point in time.
 
 ```text
-Audit Report
-= Project + snapshot time + current gate + latest reviewed assessment data + current risks + lifecycle maturity
+Assessment Dashboard
+= Project + snapshot time + current gate + formal assessment results + current risks + lifecycle maturity
 ```
 
 The dashboard is a risk display and attention mechanism. It does not maintain approval decisions, management conclusions, or decision records.
@@ -29,18 +29,40 @@ Reference inputs:
 
 ## 2. Report Views
 
-The report shall have one snapshot section and three fixed analytical views.
+The dashboard shall have one snapshot section and five fixed analytical views.
 
 ```text
-0. Audit Snapshot
+0. Assessment Snapshot
 1. Quality Gate Maturity
 2. Project Risk Posture
-3. Lifecycle & Process Maturity
+3. Quality Sub-Characteristic Maturity
+4. Lifecycle Activity Maturity
+5. Team Activity & Work Product Matrix
 ```
 
-### 2.1 Audit Snapshot
+`Quality Gate Maturity`, `Quality Sub-Characteristic Maturity`, `Lifecycle Activity Maturity`, and `Team Activity & Work Product Matrix` are not separate scoring systems. They are different aggregation views over the same formal Activity x Gate result base.
 
-Audit Snapshot summarises:
+```text
+Activity x Gate Results
+-> Gate / Quality Aspect
+   = Quality Gate Maturity
+
+Activity x Gate Results
+-> Quality Sub-Characteristic / Quality Aspect
+   = Quality Sub-Characteristic Maturity
+
+Activity x Gate Results
+-> Framework / Lifecycle Phase / Activity
+   = Lifecycle Activity Maturity
+
+Activity x Gate Results
+-> Activity / Team / Work Product
+   = Team Activity & Work Product Matrix
+```
+
+### 2.1 Assessment Snapshot
+
+Assessment Snapshot summarises:
 
 - Project identity
 - Product line and quality aspects
@@ -52,10 +74,8 @@ Audit Snapshot summarises:
 - Process maturity risk level
 - Gate readiness and progression signal
 - Risk confidence
-- Official maturity score
-- Draft maturity score
+- Integrated maturity score
 - Open risk summary
-- Pending human confirmation count
 
 Example:
 
@@ -71,17 +91,15 @@ Example:
 | Process maturity risk      | High                                |
 | Gate progression signal    | Conditional                         |
 | Risk confidence            | Low                                 |
-| Official integrated score  | 45% Insufficient                    |
-| Draft integrated score     | 69% In progress                     |
+| Integrated score           | 45% Insufficient                    |
 | Assessment coverage        | 60%                                 |
-| Pending human confirmation | 18 Activity x Gate results          |
 | Current gate impact        | 3 blocking gaps, 5 conditional risks |
 
-The project may look better in draft because AI/system results exist, but the official report remains lower until those assessment results are human-confirmed.
+The dashboard shows one formal report result. Any preparatory analysis outside the dashboard is not represented as a separate report stream.
 
 ### 2.1.1 Executive Dashboard Risk Signals
 
-Audit Snapshot shall show five executive risk signals:
+Assessment Snapshot shall show five executive risk signals:
 
 ```text
 Recommended Attention Level
@@ -185,7 +203,7 @@ Example rules:
 
 | Condition                                                                    | Gate Progression Signal |
 | ---------------------------------------------------------------------------- | ----------------------- |
-| Current Gate Official maturity >= 70%, no P0 Fail, Official coverage >= 80%  | Ready                   |
+| Current Gate maturity >= 70%, no P0 Fail, Assessment coverage >= 80% | Ready |
 | Current gate is close to thresholds, or conditional risks remain             | Conditional             |
 | P0 Fail, critical evidence gap, or current gate maturity far below threshold | Blocked                 |
 | Required assessment data is missing                                          | Unknown                 |
@@ -206,7 +224,7 @@ Risk Confidence shall be calculated from:
 
 - Evidence coverage
 - Trace coverage
-- Official assessment coverage
+- Assessment coverage
 - Review freshness
 - Unknown or unassessed critical item ratio
 
@@ -216,7 +234,7 @@ Thresholds:
 | ---------------------------- | -----------------: |
 | Evidence coverage            |              >=70% |
 | Trace coverage               |              >=70% |
-| Official assessment coverage |              >=80% |
+| Assessment coverage |              >=80% |
 
 Risk Confidence levels:
 
@@ -242,12 +260,12 @@ Example:
 
 ```text
 Risk Confidence: Low
-Primary reason: Official assessment coverage below threshold
+Primary reason: Assessment coverage below threshold
 
 Breakdown:
 - Evidence coverage: 58%
 - Trace coverage: 64%
-- Official assessment coverage: 42%
+- Assessment coverage: 42%
 - Review freshness: 71%
 - Critical unknown items: 7
 ```
@@ -286,7 +304,7 @@ Example:
 | QG1  | 78% | 50%  | 62% | 58%   | 46%       |
 | QG2  | 72% | 50%  | 55% | 52%   | 44%       |
 
-The same underlying Activity x Gate Results can also be grouped by Quality Characteristic/Subcharacteristic for detailed quality attribute maturity.
+The same underlying Activity x Gate Results can also be grouped by Quality Sub-Characteristic and Quality Aspect for sub-characteristic maturity.
 
 ### 2.3 Project Risk Posture
 
@@ -320,9 +338,43 @@ Example:
 | Largest risk aspect   | FuSA                                |
 | Largest evidence gap  | Safety analysis and SOTIF scenarios |
 
-### 2.4 Lifecycle & Process Maturity
+### 2.4 Quality Sub-Characteristic Maturity
 
-Lifecycle & Process Maturity is framework/activity-centred.
+Quality Sub-Characteristic Maturity is sub-characteristic-centred.
+
+It answers:
+
+```text
+How well is a quality sub-characteristic, such as Functional completeness,
+realised across applicable QM, FuSA, CS, SOTIF, and AI Safety aspects?
+```
+
+It groups the same Activity x Gate result base by:
+
+```text
+Quality Sub-Characteristic -> Quality Aspect -> Activity x Gate
+```
+
+The example table should make the judgement chain readable: why the sub-characteristic is related to each aspect, where the maturity comes from, and which aspect is weakest.
+
+| Characteristic | Quality Sub-Characteristic | Related Quality Aspects and Technical Rationale | Aspect Realisation | Overall Maturity | Weakest Aspect / Main Weakness |
+| --- | --- | --- | --- | ---: | --- |
+| Functional suitability | Functional completeness | QM: functions cover project needs and user tasks; FuSA: safety-related functions, safety mechanisms, and degradation functions must be complete; SOTIF: ODD, trigger conditions, and scenario coverage determine intended-function completeness; AI Safety: data lifecycle, model capability boundaries, and runtime constraints must be covered | QM 85% / FuSA 60% / SOTIF 55% / AI Safety 40% | 62% | AI Safety: data lifecycle and model capability boundary evidence incomplete |
+| Functional suitability | Functional correctness | QM: outputs meet functional specification; FuSA: incorrect perception, fusion, or control outputs may create safety risk; SOTIF: correctness must cover known trigger scenarios and performance limitations; AI Safety: model output correctness, robustness, and error boundaries require evidence | QM 80% / FuSA 58% / SOTIF 52% / AI Safety 45% | 59% | AI Safety: corner-case and misclassification boundary evidence incomplete |
+| Performance efficiency | Time behaviour | QM: response time affects usability; FuSA: warning, braking, or steering latency can affect safety goals; SOTIF: latency may increase trigger-scenario risk; AI Safety: inference latency and degradation strategy affect runtime safety | QM 70% / FuSA 55% / SOTIF 50% / AI Safety 45% | 58% | AI Safety: inference latency and degradation evidence incomplete |
+| Safety | Risk identification | FuSA: hazards and safety-goal risks must be identified; SOTIF: intended-function insufficiency, trigger conditions, and scenario risks must be identified; AI Safety: data, model, runtime monitoring, and misuse risks must be identified | FuSA 60% / SOTIF 50% / AI Safety 45% | 52% | SOTIF: trigger scenario risk identification incomplete |
+| Safety | Fail safe | FuSA: faults must lead to a safe state or controlled degradation; SOTIF: non-fault functional limitation scenarios must also avoid unsafe behaviour | FuSA 68% / SOTIF 48% | 56% | SOTIF: fail-safe evidence for limitation scenarios incomplete |
+| Safety | Hazard warning | FuSA: safety-relevant hazardous states require recognisable warning; SOTIF: ODD boundaries, functional limitations, and misuse risks require warning or driver guidance; QM: warnings must be understandable and consistent with user tasks | QM 76% / FuSA 62% / SOTIF 50% | 60% | SOTIF: ODD boundary warning evidence incomplete |
+
+Rows should be ordered by `Characteristic -> Quality Sub-Characteristic`, so related Safety sub-characteristics such as `Risk identification`, `Fail safe`, and `Hazard warning` are shown together.
+
+This view does not directly score the sub-characteristic itself. It aggregates the related Activity x Gate results, evidence, risks, and trace context that realise the sub-characteristic across applicable quality aspects.
+
+The table shall show `Mapped Aspects & Rationale`, explaining why the sub-characteristic is related to QM, FuSA, CS, SOTIF, or AI Safety. The rationale comes from the ADAS quality aspect mapping, such as `mappingReason` in `07_ADAS_Quality_Aspect_Mapping.json`. A project scope selection only means that the aspect is assessed for this project; it is not a technical rationale. If the common mapping model has no rationale for the sub-characteristic and aspect pair, the UI shall expose that as a model-definition gap instead of presenting the scope selection as the reason.
+
+### 2.5 Lifecycle Activity Maturity
+
+Lifecycle Activity Maturity is lifecycle-activity-centred.
 
 It answers:
 
@@ -347,6 +399,61 @@ Example:
 | CS        | 55%   | TARA treatment rationale missing |
 | SOTIF     | 52%   | Scenario coverage incomplete     |
 | AI Safety | 44%   | AI safety argument not evaluated |
+
+### 2.6 Team Activity & Work Product Matrix
+
+Team Activity & Work Product Matrix is the team-oriented breakdown of lifecycle activity maturity. Rows are QM, FuSA, CS, SOTIF, and AI Safety activities; columns are project teams. Each cell shows responsibility, maturity, work product status, evidence status, and blocking risk context.
+
+Default ADAS team columns:
+
+| Team Column | Team / Scope | Safety Classification |
+| --- | --- | --- |
+| PdM/PgM/PjM AD/ADAS | Product / Program / Project management | Cross-functional AD/ADAS coordination |
+| 360 deg Perception AD/ADAS Safety | AD/ADAS perception team | AD/ADAS Safety |
+| Map (Vehicle) CA & AD/ADAS Non-Safety | Vehicle map team | CA and AD/ADAS Non-Safety |
+| LaneLevelLocalization AD/ADAS Non-Safety | Lane-level localization team | AD/ADAS Non-Safety |
+| MotionPlanner AD/ADAS Safety-Rule | Rule-based motion planning team | AD/ADAS Safety |
+| MotionPlanner AD/ADAS Safety-ML (SWC: DDTP) | ML-based motion planning team | AD/ADAS Safety-ML |
+| InterCommBev (Application Framework) | Application framework / inter-communication team | Application Framework |
+| Controller AD/ADAS Safety | AD/ADAS controller team | AD/ADAS Safety |
+| Product Integrity | Product integrity / independent quality integrity role | Cross-functional review |
+| Product Delivery (Optional) | Product delivery coordination | Optional |
+
+The team list is project-configurable. Projects may tailor, rename, add, or remove team columns.
+
+Cell role values:
+
+| Role | Meaning |
+| --- | --- |
+| A | Accountable team |
+| C | Contributing team |
+| R | Reviewer / Approver |
+| N/A | Not applicable |
+
+The visual matrix shall prioritise `activity rows x team columns`. Rows are approved lifecycle-family activities, not long gate checklist question text. Supporting fields such as gate, quality context, responsible role, expected maturity, work product, evidence, and judgement should be shown inside the activity cell or a trailing detail column, not between the activity column and the team columns. Cells must not be blank: applicable teams show `A / C / R + maturity + work product status + evidence status`; non-applicable teams show `N/A`.
+
+Example matrix:
+
+| Framework / Activity | PdM/PgM/PjM AD/ADAS | 360 deg Perception AD/ADAS Safety | Map (Vehicle) CA & AD/ADAS Non-Safety | LaneLevelLocalization AD/ADAS Non-Safety | MotionPlanner AD/ADAS Safety-Rule | MotionPlanner AD/ADAS Safety-ML (SWC: DDTP) | InterCommBev (Application Framework) | Controller AD/ADAS Safety | Product Integrity | Product Delivery (Optional) | Assessment Detail |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FuSA: HARA | C / 60% | C / 55% | N/A | C / 45% | A / 70% | C / 50% | N/A | C / 62% | R / 65% | N/A | QG1 / HARA report |
+| SOTIF: Triggering condition identification | C / 55% | C / 50% | A / 40% | C / 45% | C / 48% | C / 45% | N/A | C / 52% | R / 58% | N/A | QG1 / triggering condition catalogue |
+| AI Safety: Data lifecycle planning | C / 42% | C / 45% | C / 50% | A / 38% | C / 40% | N/A | N/A | C / 42% | R / 48% | N/A | QG2 / data lifecycle plan and governance model |
+| CS: TARA | N/A | C / 55% | A / 68% | C / 52% | C / 55% | C / 50% | N/A | C / 55% | R / 62% | N/A | QG1 / TARA report |
+| QM: Requirement review | A / 75% | A / 70% | A / 70% | A / 68% | A / 72% | A / 69% | A / 70% | A / 72% | R / 80% | C / 65% | QG1 / Functional suitability / requirement review |
+
+Rules:
+
+1. Each applicable activity should have at least one Accountable team.
+2. An activity may have multiple Contributing teams.
+3. Product Integrity may be Reviewer / Approver, but should not replace the accountable activity owner.
+4. Product Delivery (Optional) is optional and should appear only when delivery coordination is in project scope.
+5. Multi-team participation must not inflate overall scores; aggregation uses activity and work product weights, not team count.
+6. Activities without an Accountable team contribute to critical unknowns or assessment coverage gaps.
+7. Missing work products contribute to evidence coverage gaps.
+8. Work products that exist but are not reviewed cannot reach `4 Deliverable accepted`.
+9. `Responsible Role` from the Excel gate checklist is not the same as concrete development team assignment. The matrix should use a configured activity-team responsibility model. The system may provide a default ADAS responsibility model, but project teams must be able to tailor, override, or extend it.
+10. Non-applicable team cells must show `N/A`, not blank cells.
 
 ---
 
@@ -577,15 +684,10 @@ Each applicable Activity x Gate result stores both maturity and judgement.
 | ---------------------------------- | ------------------------------------------------ |
 | `maturity_state`                 | Activity/evidence/deliverable maturity           |
 | `judgement`                      | Gate judgement: Pass, Fail, Waived, Not Assessed |
-| `source`                         | manual, ai_agent, imported                       |
-| `ai_maturity_state`              | AI-proposed maturity state                       |
-| `ai_judgement`                   | AI-proposed judgement                            |
-| `ai_confidence`                  | AI confidence 0.0-1.0                            |
-| `ai_rationale`                   | AI reasoning                                     |
-| `human_confirmed_maturity_state` | Human-confirmed assessment result                |
-| `human_confirmed_judgement`      | Human-confirmed gate judgement                   |
-| `assessment_reviewed_by`         | Person confirming the assessment result          |
-| `assessment_reviewed_at`         | Confirmation timestamp                           |
+| `source`                         | manual, imported, system                         |
+| `assessment_result_status`       | Formal result status                             |
+| `assessment_result_owner`        | Person or role responsible for the result        |
+| `assessment_result_date`         | Result timestamp                                 |
 | `evidence_ids`                   | Linked Evidence Items                            |
 | `risk_ids`                       | Linked Risk Items                                |
 | `trace_node_ids`                 | Optional links into Trace Chain nodes            |
@@ -596,13 +698,10 @@ Example ActivityGateResult:
 | ------------------------------ | ------------------------------------------------------------ |
 | maturity_state                 | 3 Evidence complete                                          |
 | judgement                      | Fail                                                         |
-| source                         | ai_agent                                                     |
-| ai_maturity_state              | 3 Evidence complete                                          |
-| ai_judgement                   | Fail                                                         |
-| ai_confidence                  | 0.91                                                         |
-| ai_rationale                   | HARA exists, but severity/exposure/controllability rationale is incomplete |
-| human_confirmed_maturity_state | 3 Evidence complete                                          |
-| human_confirmed_judgement      | Fail                                                         |
+| source                         | manual                                                       |
+| assessment_result_status       | Formal                                                       |
+| assessment_result_owner        | Safety assessor                                              |
+| assessment_result_date         | 2026-06-02                                                   |
 | evidence_ids                   | HARA-001, SG-001                                             |
 | risk_ids                       | R-FUSA-004                                                   |
 
@@ -610,7 +709,7 @@ The evidence package exists, so maturity can reach 3. The deliverable is not acc
 
 ### 6.1 Maturity State
 
-Maturity state describes the actual maturity of the activity, evidence, or deliverable. It does not describe whether the AI result has been reviewed.
+Maturity state describes the actual maturity of the activity, evidence, or deliverable. It does not represent a separate AI review state.
 
 | State | Name                 | Meaning                                                                                  |
 | ----- | -------------------- | ---------------------------------------------------------------------------------------- |
@@ -652,9 +751,9 @@ Two review concepts must not be confused:
 | Review Type                   | Affects                         | Meaning                                                                                    |
 | ----------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
 | Deliverable / Evidence Review | `maturity_state`              | The artifact itself has been technically reviewed, process-reviewed, approved, or accepted |
-| Assessment Result Review      | official/draft reporting status | A human confirms or overrides an AI/system judgement about the maturity state              |
+| Assessment Result Status      | formal report result            | The assessment result is valid for the report                                              |
 
-`Deliverable accepted` means the artifact is accepted. It does not mean the AI assessment result was accepted.
+`Deliverable accepted` means the artifact is accepted. It is not a separate statement about an AI-generated assessment result.
 
 ---
 
@@ -682,7 +781,7 @@ Overall integrated maturity shall show the P0 blocking warning. The overall scor
 
 Example P0 cap:
 
-| Activity x Gate Item | Human-confirmed maturity_state | Numeric State | P0? |
+| Activity x Gate Item | maturity_state | Numeric State | P0? |
 | -------------------- | ------------------------------ | ------------: | --- |
 | Item definition QG2  | 4 Deliverable accepted         | 4             | Yes |
 | HARA QG2             | 3 Evidence complete            | 3             | Yes |
@@ -698,67 +797,41 @@ Final FuSA QG2 score = min(56.25%, 50%) = 50% In progress.
 
 ---
 
-## 8. Official and Draft Scores
+## 8. Integrated Score
 
-The report shall compute two scores.
-
-### 8.1 Official Score
-
-Official score uses human-confirmed assessment results only.
+The report shall compute one formal integrated score.
 
 Rules:
 
-- Applicable Activity x Gate items without human-confirmed result count as 0 Not assessed.
+- Applicable Activity x Gate items without a formal assessment result count as 0 Not assessed.
 - Not applicable items are excluded.
 - Assessment coverage is shown separately.
 
 ```text
-Official coverage
-= human-confirmed applicable items / total applicable items
+Assessment coverage
+= applicable items with formal assessment result / total applicable items
 ```
-
-### 8.2 Draft Score
-
-Draft score uses:
-
-- Human-confirmed results, full weight
-- AI-proposed results not yet human-confirmed, confidence weighted
-
-AI confidence weighting:
-
-| AI confidence | Draft weight                 |
-| ------------- | ---------------------------- |
-| >= 0.80       | Full weight                  |
-| 0.60-0.79     | Half weight                  |
-| < 0.60        | Treated as 0 for draft score |
 
 Report display:
 
 ```text
-Official maturity: 62% In progress
-Draft maturity: 78% Review-ready
-Pending human confirmation: 12 items
+Integrated maturity: 62% In progress
 Assessment coverage: 68%
 ```
 
-`Review-ready` may be used as a display band, but the underlying maturity state name is `Evidence complete`.
-
-Example official vs draft score:
+Example integrated score:
 
 | Item Group                       | Count | Contribution Rule                 | Numerator |
 | -------------------------------- | ----: | --------------------------------- | --------: |
-| Human-confirmed applicable items | 6     | Full weight                       | 18.0      |
-| AI confidence >= 0.80            | 2     | Full draft weight, states 4 and 4 | 8.0       |
-| AI confidence 0.60-0.79          | 1     | Half draft weight, state 3        | 1.5       |
-| AI confidence < 0.60             | 1     | Treated as 0                      | 0.0       |
+| Applicable formal result items   | 6     | Full weight                       | 18.0      |
+| Applicable items without result  | 4     | Count as 0 Not assessed           | 0.0       |
 
 Assume 10 applicable equal-weight items:
 
 ```text
 Maximum numerator = 10 * 4 = 40
-Official score = 18.0 / 40 = 45%
-Official coverage = 6 / 10 = 60%
-Draft score = (18.0 + 8.0 + 1.5) / 40 = 68.75%
+Integrated score = 18.0 / 40 = 45%
+Assessment coverage = 6 / 10 = 60%
 ```
 
 ---
@@ -777,7 +850,7 @@ The report displays maturity as percentage plus band.
 | 70-89%     | Evidence complete       |
 | 90-100%    | Deliverable accepted    |
 
-Framework score:
+Lifecycle activity score:
 
 ```text
 weighted average of applicable Activity x Gate maturity states within the framework
@@ -842,7 +915,7 @@ Example low-maturity drill-down:
 | maturity_state            | 2 In progress                                      |
 | judgement                 | Fail                                               |
 | Required evidence         | TARA report, threat scenarios, treatment rationale |
-| Linked evidence           | TARA draft v0.3                                    |
+| Linked evidence           | TARA v0.3                                          |
 | Missing evidence gap      | Treatment option rationale missing                 |
 | Related risk              | R-CS-003 High                                      |
 | Related quality aspect    | CS                                                 |
@@ -873,20 +946,21 @@ V6.2 may keep the current gate tables as the first implementation slice. Later v
 
 This feature is accepted when:
 
-1. An audit report can be generated for a project at a snapshot time.
-2. The report includes Audit Snapshot, Quality Gate Maturity, Project Risk Posture, and Lifecycle & Process Maturity.
-3. Audit Snapshot shows Recommended Attention Level, Product Risk, Process Maturity Risk, Gate Readiness, and Risk Confidence.
+1. An Assessment Dashboard can be generated for a project at a snapshot time.
+2. The dashboard includes Assessment Snapshot, Quality Gate Maturity, Project Risk Posture, Quality Sub-Characteristic Maturity, Lifecycle Activity Maturity, and Team Activity & Work Product Matrix.
+3. Assessment Snapshot shows Recommended Attention Level, Product Risk, Process Maturity Risk, Gate Readiness, and Risk Confidence.
 4. The dashboard does not store approval decisions, management final decisions, or decision records.
 5. Gate Readiness includes a Gate Progression Signal: Ready, Conditional, Blocked, or Unknown.
-6. Risk Confidence uses Evidence coverage, Trace coverage, Official assessment coverage, review freshness, and unknown item ratio.
+6. Risk Confidence uses Evidence coverage, Trace coverage, Assessment coverage, review freshness, and unknown item ratio.
 7. Risk Confidence shows reason breakdown when Low or Unknown.
 8. Quality Gate Maturity shows QG0-QG5 across QM, FuSA, CS, SOTIF, and AI Safety.
-9. Lifecycle & Process Maturity includes QM, ISO 26262, ISO/SAE 21434, ISO 21448, and ISO/PAS 8800 activity families.
-10. SOTIF and AI Safety are separate frameworks.
-11. Activity x Gate is the minimum assessment unit.
-12. Activity x Gate stores both maturity_state and judgement.
-13. Official score uses only human-confirmed assessment results.
-14. Draft score uses human-confirmed plus confidence-weighted AI-proposed results.
-15. Applicable but unconfirmed items count as 0 in the Official score and are reflected in coverage.
-16. Maturity state names distinguish deliverable/evidence acceptance from assessment-result confirmation.
-17. Low maturity report items can drill down to linked evidence, risk, and trace chain context.
+9. Quality Sub-Characteristic Maturity groups by Quality Sub-Characteristic -> Quality Aspect -> Activity x Gate and shows weakest aspect and main weakness.
+10. Lifecycle Activity Maturity includes QM, ISO 26262, ISO/SAE 21434, ISO 21448, and ISO/PAS 8800 activity families.
+11. Team Activity & Work Product Matrix shows configurable ADAS team columns, activity responsibility, work product status, evidence status, and blocking risk context.
+12. SOTIF and AI Safety are separate frameworks.
+13. Activity x Gate is the minimum assessment unit.
+14. Activity x Gate stores both maturity_state and judgement.
+15. The report shows one integrated score based on formal assessment results.
+16. Applicable items without a formal assessment result count as 0 and are reflected in coverage.
+17. Maturity state names distinguish deliverable/evidence acceptance from assessment-result status.
+18. Low maturity report items can drill down to linked evidence, risk, and trace chain context.

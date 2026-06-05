@@ -803,7 +803,7 @@ GET /api/v1/projects/{id}/dashboard
 
 Returns pre-computed dashboard metrics.
 
-This endpoint returns the project detail landing dashboard. It may include executive risk signals derived from the Audit Report Dashboard model, but it does not store approval decisions or management decision records.
+This endpoint returns the project detail landing dashboard. It may include executive risk signals derived from the Assessment Dashboard model, but it does not store approval decisions or management decision records.
 
 **Response 200**
 
@@ -816,7 +816,7 @@ This endpoint returns the project detail landing dashboard. It may include execu
   "gate_progression_signal": "Conditional",
   "risk_confidence": "Low",
   "risk_confidence_reasons": {
-    "primary_reason": "Official assessment coverage below threshold",
+    "primary_reason": "Assessment coverage below threshold",
     "evidence_coverage": 58,
     "trace_coverage": 64,
     "official_assessment_coverage": 42,
@@ -860,13 +860,21 @@ This endpoint returns the project detail landing dashboard. It may include execu
 
 ---
 
-### 12.1 Audit Report Dashboard
+### 12.1 Assessment Dashboard
 
 ```
+GET /api/v1/projects/{id}/assessment-dashboard
+```
+
+Returns the full Assessment Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+
+Compatibility alias:
+
+```text
 GET /api/v1/projects/{id}/audit-report/dashboard
 ```
 
-Returns the full Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+The compatibility path contains `audit-report` for older callers only; user-facing terminology is Assessment Dashboard.
 
 The response is a generated snapshot payload. It is a risk display and attention mechanism; it does not create or update approval decisions, management final decisions, or decision records.
 
@@ -896,7 +904,7 @@ The response is a generated snapshot payload. It is a risk display and attention
     },
     "risk_confidence": {
       "level": "Low",
-      "primary_reason": "Official assessment coverage below threshold",
+      "primary_reason": "Assessment coverage below threshold",
       "evidence_coverage": 58,
       "trace_coverage": 64,
       "official_assessment_coverage": 42,
@@ -904,12 +912,31 @@ The response is a generated snapshot payload. It is a risk display and attention
       "critical_unknown_count": 7
     },
     "official_integrated_score": 45,
-    "draft_integrated_score": 69,
-    "pending_human_confirmation_count": 18
+    "open_risk_count": 18,
+    "evidence_gap_count": 3
   },
   "quality_gate_maturity": [],
   "project_risk_posture": {},
-  "lifecycle_process_maturity": []
+  "quality_subcharacteristic_maturity": [
+    {
+      "quality_characteristic": "Functional suitability",
+      "quality_subcharacteristic": "Functional completeness",
+      "gate": "QG2",
+      "overall_maturity": 62,
+      "mapped_aspects": ["QM", "FuSA", "SOTIF", "AI Safety"],
+      "aspect_mapping_reasons": {
+        "QM": "Mapped by ADAS quality aspect model.",
+        "FuSA": "ADAS functions shall cover the intended project scope and safety related operating scenarios."
+      },
+      "weakest_aspect": "AI Safety",
+      "evidence_coverage": 60,
+      "blocking_gap_count": 1,
+      "main_weakness": "AI Safety: Evidence coverage below sub-characteristic threshold",
+      "aspect_breakdown": []
+    }
+  ],
+  "lifecycle_process_maturity": [],
+  "team_activity_work_product_matrix": []
 }
 ```
 
@@ -1001,7 +1028,7 @@ GET /api/v1/projects/{id}/assessment/runs
 GET /api/v1/projects/{id}/assessment/runs/{run_id}
 ```
 
-Returns the full run including all 17 check results with `ai_rationale` and `ai_confidence`.
+Returns the full run including all 17 formal check results.
 
 **Response 200** — full run object (see `21_AI_Agent_Integration_Spec.md` §3.4)
 

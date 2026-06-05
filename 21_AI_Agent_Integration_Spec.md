@@ -6,7 +6,7 @@ The AI Agent integration allows an external AI system to submit gate assessment 
 
 PQRETS defines the interface. The AI Agent adapts to it.
 
-For audit reporting, AI-submitted results are treated as proposed assessment results. The official audit report score uses human-confirmed results only; AI proposals without human confirmation contribute only to draft maturity scoring. See `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+For assessment dashboard reporting, this interface is an import and assistance path. The Assessment Dashboard shows one formal assessment result based on formal assessment results; it does not expose a separate AI draft score, human-reviewed score, pending human confirmation count, or AI report stream. See `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 
 ---
 
@@ -292,17 +292,7 @@ The recommended sequence for the AI Agent:
 | 0.70–0.89 | Show yellow indicator; recommend human review |
 | < 0.70 | Show orange indicator; flag for mandatory human review before gate acceptance |
 
-PQRETS stores `ai_confidence` per result and displays it in the check item detail view.
-
-For draft lifecycle maturity scoring, AI confidence is also used as a weighting factor:
-
-| `ai_confidence` | Draft score handling |
-|---|---|
-| >= 0.80 | Full weight |
-| 0.60-0.79 | Half weight |
-| < 0.60 | Treat as 0 for draft score |
-
-Human-confirmed results are not confidence-weighted.
+PQRETS stores `ai_confidence` per imported result and may display it in the check item detail view or use it to prioritise review. AI confidence is not a maturity score and is not used to compute a separate draft lifecycle score in the Assessment Dashboard.
 
 ---
 

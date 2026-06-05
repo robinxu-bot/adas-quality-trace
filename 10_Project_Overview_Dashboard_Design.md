@@ -10,7 +10,7 @@ Project Detail shows the dashboard.
 
 This document defines the project detail entry dashboard. The full audit/report dashboard for management risk review is defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 
-The project detail entry dashboard shall link to the Audit Report Dashboard, but it shall not duplicate the full audit report model.
+The project detail entry dashboard shall link to the Assessment Dashboard, but it shall not duplicate the full assessment model.
 
 ## 2. Project View
 
@@ -74,7 +74,7 @@ The dashboard shall show:
 - Failed evidence count
 - Assessment readiness
 - Current Gate blocking gaps
-- Official assessment coverage
+- Assessment coverage
 - Trace coverage
 - Evidence coverage
 - Risk Confidence reason breakdown when Low or Unknown
@@ -98,7 +98,7 @@ Project detail shall provide:
 - Back to Project List
 - Edit Quality Scope
 - Open Sankey Trace
-- Open Audit Report Dashboard
+- Open Assessment Dashboard
 
 ## 8. Relationship to Trace View
 
@@ -115,5 +115,5 @@ Project Sankey Trace View is opened only when the user clicks Open Sankey Trace.
 5. Dashboard shows quality scope, risk, evidence, readiness, and executive risk signals.
 6. Dashboard allows editing quality scope.
 7. Dashboard allows opening Project Sankey Trace View.
-8. Dashboard allows opening the Audit Report Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
+8. Dashboard allows opening the Assessment Dashboard defined in `22_Audit_Report_And_Lifecycle_Maturity_Design.md`.
 9. Dashboard does not maintain approval decisions or management decision records.

@@ -56,17 +56,20 @@ class AuditSnapshotOut(BaseModel):
     gate_readiness: GateReadinessOut
     risk_confidence: RiskConfidenceOut
     official_integrated_score: int
-    draft_integrated_score: int
-    pending_human_confirmation_count: int
     open_risk_count: int
     evidence_gap_count: int
 
 
-class AuditReportDashboardOut(BaseModel):
+class AssessmentDashboardOut(BaseModel):
     project_id: str
     snapshot_at: str
     current_gate: str
     audit_snapshot: AuditSnapshotOut
     quality_gate_maturity: list[dict] = Field(default_factory=list)
     project_risk_posture: dict = Field(default_factory=dict)
+    quality_subcharacteristic_maturity: list[dict] = Field(default_factory=list)
     lifecycle_process_maturity: list[dict] = Field(default_factory=list)
+    team_activity_work_product_matrix: list[dict] = Field(default_factory=list)
+
+
+AuditReportDashboardOut = AssessmentDashboardOut
